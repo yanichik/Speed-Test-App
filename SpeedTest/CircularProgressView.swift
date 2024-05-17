@@ -11,18 +11,12 @@ class CircularProgressView: UIView {
     
     var progressLayer = CAShapeLayer()
     var trackLayer = CAShapeLayer()
+    var speedLabel = UILabel()
+//    var circularProgressView = UIView()
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        createCircularPath()
+        configureSpeedLabel()
     }
     
     required init?(coder: NSCoder) {
@@ -34,6 +28,7 @@ class CircularProgressView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         createCircularPath()
+//        self.bringSubviewToFront(circularProgressView)
     }
     
     var progressColor = UIColor.white {
@@ -48,9 +43,32 @@ class CircularProgressView: UIView {
         }
     }
     
+    var speed = 0 {
+        didSet {
+            speedLabel.text = String(speed) + " Mbps"
+        }
+    }
+    
+    fileprivate func configureSpeedLabel() {
+//        let speedLayer = CALayer()
+        speedLabel.translatesAutoresizingMaskIntoConstraints = false
+        speedLabel.text = String(speed) + " Mbps"
+        speedLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        speedLabel.textColor = UIColor.black
+        speedLabel.isOpaque = true
+//        speedLayer.contents = speedLabel
+//        self.layer.addSublayer(speedLayer)
+        self.addSubview(speedLabel)
+        NSLayoutConstraint.activate([
+            speedLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            speedLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        ])
+    }
     fileprivate func createCircularPath() {
         self.backgroundColor = UIColor.clear
         self.layer.cornerRadius = self.frame.width/2
+//        circularProgressView.backgroundColor = UIColor.clear
+//        circularProgressView.layer.cornerRadius = self.frame.width/2
         let path = UIBezierPath(arcCenter: CGPoint(x: frame.width/2, y: frame.height/2), radius: (frame.width - 1.5)/2, startAngle: CGFloat(-0.5 * .pi), endAngle: CGFloat(1.5 * .pi), clockwise: true)
         trackLayer.path = path.cgPath
         trackLayer.fillColor = UIColor.clear.cgColor
@@ -58,6 +76,7 @@ class CircularProgressView: UIView {
         trackLayer.opacity = 0.3
         trackLayer.lineWidth = 10.0
         trackLayer.strokeEnd = 1.0
+//        circularProgressView.layer.addSublayer(trackLayer)
         self.layer.addSublayer(trackLayer)
 
         progressLayer.path = path.cgPath
@@ -66,7 +85,8 @@ class CircularProgressView: UIView {
         progressLayer.lineWidth = 10.0
         progressLayer.strokeEnd = 0.0
         self.layer.addSublayer(progressLayer)
-        
+//        circularProgressView.layer.addSublayer(progressLayer)
+//        self.addSubview(circularProgressView)
     }
 
 }

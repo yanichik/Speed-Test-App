@@ -16,9 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5dn-gY-LAI">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5dn-gY-LAI">
                                 <rect key="frame" x="12" y="91" width="144" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Run Speed Test"/>
                                 <connections>
@@ -26,15 +25,21 @@
                                 </connections>
                             </button>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ma0-xv-8MN">
-                                <rect key="frame" x="121" y="282.99999999999994" width="150" height="5"/>
+                                <rect key="frame" x="121" y="283" width="150" height="4"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="5dn-gY-LAI" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="32" id="2Fd-8v-oNu"/>
+                            <constraint firstItem="5dn-gY-LAI" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="12" id="7b3-Xr-3Nl"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="5dn-gY-LAI" secondAttribute="trailing" constant="237" id="k6T-Su-Sc5"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="progressBar" destination="Ma0-xv-8MN" id="EfL-l9-XcD"/>
+                        <outlet property="runSpeedTestBtn" destination="5dn-gY-LAI" id="5sQ-1M-go1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

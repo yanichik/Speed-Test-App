@@ -12,30 +12,60 @@ import CoreLocation
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var runSpeedTestBtn: UIButton!
     @IBOutlet weak var progressBar: UIProgressView!
     let circularProgressBar = CircularProgressView()
     
     private var internetTest: InternetSpeedTest?
     private var locationManager = CLLocationManager()
     private var signalHelper: SCSignalHelper?
+    
+    let gradientLayer: CAGradientLayer = {
+            let layer = CAGradientLayer()
+            layer.colors = [
+                UIColor.red.cgColor,
+                UIColor.green.cgColor
+            ]
+            return layer
+        }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        view.layer.addSublayer(gradientLayer)
+//        gradientLayer.frame = view.bounds
+        runSpeedTestBtn.translatesAutoresizingMaskIntoConstraints = false
+        runSpeedTestBtn.layer.zPosition = 1
+        
         progressBar.isHidden = true
         
-        circularProgressBar.translatesAutoresizingMaskIntoConstraints = false
+//        circularProgressBar.translatesAutoresizingMaskIntoConstraints = false
         circularProgressBar.progressColor = UIColor.blue
         circularProgressBar.trackColor = .systemMint
         view.addSubview(circularProgressBar)
-        NSLayoutConstraint.activate([
-            circularProgressBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circularProgressBar.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            circularProgressBar.widthAnchor.constraint(equalToConstant: 100),
-            circularProgressBar.heightAnchor.constraint(equalToConstant: 100)
-        ])
+//        NSLayoutConstraint.activate([
+//            circularProgressBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            circularProgressBar.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+//            circularProgressBar.widthAnchor.constraint(equalToConstant: 125),
+//            circularProgressBar.heightAnchor.constraint(equalToConstant: 125)
+//        ])
+        circularProgressBar.frame.size.width = 125
+        circularProgressBar.frame.size.height = 125
+        circularProgressBar.center = self.view.center
         
 
         requestLocationAuthorization()
+    }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        
+//        gradientLayer.frame = view.bounds
+//    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        circularProgressBar.speedLabel.isHidden = true
     }
 
     @IBAction func runSpeedTestTouched(_ sender: UIButton) {
@@ -56,7 +86,7 @@ class ViewController: UIViewController {
 //        }
         signalHelper = SCSignalHelper()
         let signalStrength = signalHelper?.getSignalStrengh()
-        print(signalStrength?.wiFiStrength)
+        print("signalStrength: \(String(describing: signalStrength?.wiFiStrength?.convertToDB() ?? 0))")
     }
     
     func requestLocationAuthorization() {
@@ -106,6 +136,9 @@ extension ViewController: InternetSpeedTestDelegate {
     func internetTestDownload(progress: Double, speed: SpeedTestSpeed) {
 //        progressBar.progress = Float(progress)
         circularProgressBar.progressLayer.strokeEnd = progress
+        print("circularProgressBar.progressLayer.strokeEnd = \(progress)")
+//        circularProgressBar.speedLabel.text = "\(Int(speed.mbps)) Mbps"
+        circularProgressBar.speed = Int(speed.mbps)
         print("Download: \(speed.descriptionInMbps)")
     }
     
