@@ -12,6 +12,7 @@ class CircularProgressView: UIView {
     var progressLayer = CAShapeLayer()
     var trackLayer = CAShapeLayer()
     var speedLabel = UILabel()
+    var uploadDownloadLabel = UILabel()
 //    var circularProgressView = UIView()
 
     override init(frame: CGRect) {
@@ -25,10 +26,30 @@ class CircularProgressView: UIView {
 //        fatalError("init(coder:) has not been implemented")
     }
     
+    convenience init(withType type: String) {
+        self.init()
+        configureUploadDownloadLabel(withType: type)
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         createCircularPath()
 //        self.bringSubviewToFront(circularProgressView)
+    }
+    
+    func configureUploadDownloadLabel(withType type: String) {
+        uploadDownloadLabel = UILabel()
+        uploadDownloadLabel.text = type
+        
+        uploadDownloadLabel.translatesAutoresizingMaskIntoConstraints = false
+        uploadDownloadLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        uploadDownloadLabel.textColor = UIColor.black
+        uploadDownloadLabel.isOpaque = true
+        self.addSubview(uploadDownloadLabel)
+        NSLayoutConstraint.activate([
+            uploadDownloadLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            uploadDownloadLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: -35)
+        ])
     }
     
     var progressColor = UIColor.white {
