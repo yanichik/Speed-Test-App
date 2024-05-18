@@ -12,12 +12,14 @@ class CircularProgressView: UIView {
     var progressLayer = CAShapeLayer()
     var trackLayer = CAShapeLayer()
     var speedLabel = UILabel()
+    var progressLabel = UILabel()
     var uploadDownloadLabel = UILabel()
 //    var circularProgressView = UIView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSpeedLabel()
+        configureProgressLabel()
     }
     
     required init?(coder: NSCoder) {
@@ -70,19 +72,36 @@ class CircularProgressView: UIView {
         }
     }
     
+    var progress = 0.0 {
+        didSet {
+            progressLayer.strokeEnd = progress
+            progressLabel.text = String(format: "%.0f", (progress*100).rounded()) + "%"
+        }
+    }
+    
     fileprivate func configureSpeedLabel() {
-//        let speedLayer = CALayer()
         speedLabel.translatesAutoresizingMaskIntoConstraints = false
         speedLabel.text = String(speed) + " Mbps"
         speedLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
         speedLabel.textColor = UIColor.black
         speedLabel.isOpaque = true
-//        speedLayer.contents = speedLabel
-//        self.layer.addSublayer(speedLayer)
         self.addSubview(speedLabel)
         NSLayoutConstraint.activate([
             speedLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             speedLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        ])
+    }
+    
+    fileprivate func configureProgressLabel() {
+        progressLabel.translatesAutoresizingMaskIntoConstraints = false
+        progressLabel.text = String(format: "%.0f", (progress*100).rounded()) + "%"
+        progressLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        progressLabel.textColor = UIColor.black
+        progressLabel.isOpaque = true
+        self.addSubview(progressLabel)
+        NSLayoutConstraint.activate([
+            progressLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            progressLabel.topAnchor.constraint(equalTo: self.bottomAnchor, constant: 10)
         ])
     }
     fileprivate func createCircularPath() {
@@ -94,7 +113,7 @@ class CircularProgressView: UIView {
         trackLayer.path = path.cgPath
         trackLayer.fillColor = UIColor.clear.cgColor
         trackLayer.strokeColor = trackColor.cgColor
-        trackLayer.opacity = 0.3
+        trackLayer.opacity = 0.5
         trackLayer.lineWidth = 10.0
         trackLayer.strokeEnd = 1.0
 //        circularProgressView.layer.addSublayer(trackLayer)

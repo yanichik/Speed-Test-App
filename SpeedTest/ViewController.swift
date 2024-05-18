@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var runSpeedTestBtn: UIButton!
     @IBOutlet weak var progressBar: UIProgressView!
+    var stopBtn = UIButton()
     let downloadProgress = CircularProgressView(withType: "Download")
     let uploadProgress = CircularProgressView(withType: "Upload")
     
@@ -24,8 +25,8 @@ class ViewController: UIViewController {
     let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
-            UIColor.red.cgColor,
-            UIColor.green.cgColor
+            UIColor.lightText.cgColor,
+            UIColor.lightGray.cgColor
         ]
         return layer
     }()
@@ -43,6 +44,8 @@ class ViewController: UIViewController {
         configureDownloadProgressBar()
         configureUploadProgressBar()
         
+        configureStopButton()
+        
         requestLocationAuthorization()
     }
     
@@ -51,6 +54,26 @@ class ViewController: UIViewController {
     //
     //        gradientLayer.frame = view.bounds
     //    }
+    
+    func configureStopButton() {
+        stopBtn.setTitle("Stop Current Test", for: .normal)
+        stopBtn.addTarget(self, action: #selector(stopBtnTapped), for: .touchUpInside)
+        stopBtn.translatesAutoresizingMaskIntoConstraints = false
+        stopBtn.titleLabel?.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        stopBtn.setTitleColor(.red, for: .normal)
+        view.addSubview(stopBtn)
+        NSLayoutConstraint.activate([
+            stopBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stopBtn.centerYAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height/8))
+        ])
+        
+    }
+    
+    @objc func stopBtnTapped() {
+        internetTest?.forceFinish({ error in
+            print(error)
+        })
+    }
     
     func configureDownloadProgressBar() {
         downloadProgress.translatesAutoresizingMaskIntoConstraints = false
@@ -105,14 +128,6 @@ class ViewController: UIViewController {
                 print("Error: \(error.rawValue)")
             }
         }
-        
-        // to use paid version, your app does not need location access
-        //        internetTest = InternetSpeedTest(licenseKey: "Your license key", delegate: self)
-        //        internetTest?.start() { (error) in
-        //          if error != .ok {
-        //              print("Error: \(error.rawValue)")
-        //          }
-        //        }
         signalHelper = SCSignalHelper()
         let signalStrength = signalHelper?.getSignalStrengh()
         print("signalStrength: \(String(describing: signalStrength?.wiFiStrength?.convertToDB() ?? 0))")
@@ -122,14 +137,14 @@ class ViewController: UIViewController {
         var timeLeft = CGFloat(0)
         Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { [weak self] timer in
             DispatchQueue.main.async {
-                self?.downloadProgress.progressLayer.strokeEnd = CGFloat(1/timeLeft)
-                self?.uploadProgress.progressLayer.strokeEnd = CGFloat(1/timeLeft)
+                self?.downloadProgress.progress = CGFloat(1/timeLeft)
+                self?.uploadProgress.progress = CGFloat(1/timeLeft)
             }
             timeLeft += 1
             if(timeLeft==100){
                 DispatchQueue.main.async {
-                    self?.downloadProgress.progressLayer.strokeEnd = CGFloat(0)
-                    self?.uploadProgress.progressLayer.strokeEnd = CGFloat(0)
+                    self?.downloadProgress.progress = CGFloat(0)
+                    self?.uploadProgress.progress = CGFloat(0)
                 }
                 timer.invalidate()
             }
@@ -149,6 +164,12 @@ class ViewController: UIViewController {
         }
     }
     
+}
+
+extension ViewController {
+    struct InternetSpeedTestResult {
+        let server: SpeedcheckerSDK.SpeedTestServer
+    }
 }
 
 
@@ -183,8 +204,8 @@ extension ViewController: InternetSpeedTestDelegate {
     }
     
     func internetTestDownload(progress: Double, speed: SpeedTestSpeed) {
-        downloadProgress.progressLayer.strokeEnd = progress
-        print("downloadProgress.progressLayer.strokeEnd = \(progress)")
+        downloadProgress.progress = progress
+        print("downloadProgress.progress = \(progress)")
         //        downloadProgress.speedLabel.text = "\(Int(speed.mbps)) Mbps"
         downloadProgress.speed = Int(speed.mbps)
         print("Download: \(speed.descriptionInMbps)")
@@ -199,8 +220,8 @@ extension ViewController: InternetSpeedTestDelegate {
     }
     
     func internetTestUpload(progress: Double, speed: SpeedTestSpeed) {
-        uploadProgress.progressLayer.strokeEnd = progress
-        print("uploadProgress.progressLayer.strokeEnd = \(progress)")
+        uploadProgress.progress = progress
+        print("uploadProgress.progress = \(progress)")
         //        uploadProgress.speedLabel.text = "\(Int(speed.mbps)) Mbps"
         uploadProgress.speed = Int(speed.mbps)
         print("Upload: \(speed.descriptionInMbps)")
