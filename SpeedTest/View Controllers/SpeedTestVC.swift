@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SpeedTestVC.swift
 //  SpeedTest
 //
 //  Created by admin on 5/14/24.
@@ -9,8 +9,9 @@ import UIKit
 import SpeedcheckerSDK
 import SpeedcheckerReportSDK
 import CoreLocation
+import CoreData
 
-class ViewController: UIViewController {
+class SpeedTestVC: UIViewController {
     
     @IBOutlet weak var runSpeedTestBtn: UIButton!
     @IBOutlet weak var progressBar: UIProgressView!
@@ -21,6 +22,10 @@ class ViewController: UIViewController {
     private var internetTest: InternetSpeedTest?
     private var locationManager = CLLocationManager()
     private var signalHelper: SCSignalHelper?
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    var testResultsArray = Array<SpeedTestResultsModel>()
     
     let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -165,24 +170,53 @@ class ViewController: UIViewController {
     }
     
 }
-
-extension ViewController {
+// MARK: - InternetSpeedTestResult Server
+extension SpeedTestVC {
     struct InternetSpeedTestResult {
         let server: SpeedcheckerSDK.SpeedTestServer
     }
 }
 
+// MARK: - InternetSpeedTestResult Core Data
+extension SpeedTestVC {
+    func addSpeedTestResultsToCoreData(latitude: Double, longitude: Double, downloadSpeed: Double, uploadSpeed: Double){
+        let newResult = SpeedTestResultsModel(context: context)
+        newResult.latitude = latitude
+        newResult.longitude = longitude
+        newResult.downloadSpeedMbps = downloadSpeed
+        newResult.uploadSpeedMbps = uploadSpeed
+        do {
+            try context.save()
+        } catch {
+            print("Data saving error: \(error)")
+        }
+    }
+    
+    func fetchSpeedTestResultsFromCoreData(onSuccess: @escaping ([SpeedTestResultsModel]?) -> Void, onFailure: @escaping (Error) -> Void){
+        do {
+            let allResults = try context.fetch(SpeedTestResultsModel.fetchRequest()) as? [SpeedTestResultsModel]
+            onSuccess(allResults)
+        } catch {
+            print("Data fetching error: \(error)")
+            onFailure(error)
+        }
+    }
+    
+//    func deleteSpeedTestResultFromCoreData
+}
+
 
 // MARK: - InternetSpeedTestDelegate
-extension ViewController: InternetSpeedTestDelegate {
+extension SpeedTestVC: InternetSpeedTestDelegate {
     func internetTestError(error: SpeedTestError) {
         print("Error: \(error.rawValue)")
     }
     
     func internetTestFinish(result: SpeedTestResult) {
-        print(result.downloadSpeed.mbps)
-        print(result.uploadSpeed.mbps)
-        print(result.latencyInMs)
+    addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps)
+//        print(result.downloadSpeed.mbps)
+//        print(result.uploadSpeed.mbps)
+//        print(result.latencyInMs)
         
     }
     
@@ -228,5 +262,5 @@ extension ViewController: InternetSpeedTestDelegate {
     }
 }
 // MARK: - CLLocationManagerDelegate
-extension ViewController: CLLocationManagerDelegate {
+extension SpeedTestVC: CLLocationManagerDelegate {
 }

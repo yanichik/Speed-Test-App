@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ehg-me-pdJ">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
+        <capability name="Map view configurations" minToolsVersion="14.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Speed Test-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="SpeedTest" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="SpeedTestVC" customModule="SpeedTest" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -37,6 +38,7 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="5dn-gY-LAI" secondAttribute="trailing" constant="237" id="k6T-Su-Sc5"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Speed Test" id="tgl-wU-xXT"/>
                     <connections>
                         <outlet property="progressBar" destination="Ma0-xv-8MN" id="EfL-l9-XcD"/>
                         <outlet property="runSpeedTestBtn" destination="5dn-gY-LAI" id="5sQ-1M-go1"/>
@@ -44,7 +46,57 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11" y="4"/>
+            <point key="canvasLocation" x="936.64122137404581" y="3.5211267605633805"/>
+        </scene>
+        <!--Map-->
+        <scene sceneID="6Rn-JN-xw1">
+            <objects>
+                <viewController id="u4e-5r-VeS" customClass="MapVC" customModule="SpeedTest" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="IAI-Zv-WZe">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WAk-BX-2Us">
+                                <rect key="frame" x="0.0" y="59" width="393" height="710"/>
+                                <standardMapConfiguration key="preferredConfiguration"/>
+                            </mapView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="mSZ-V5-EYZ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="WAk-BX-2Us" firstAttribute="leading" secondItem="mSZ-V5-EYZ" secondAttribute="leading" id="PbG-H1-RCa"/>
+                            <constraint firstItem="mSZ-V5-EYZ" firstAttribute="trailing" secondItem="WAk-BX-2Us" secondAttribute="trailing" id="XjK-5h-Iim"/>
+                            <constraint firstItem="WAk-BX-2Us" firstAttribute="top" secondItem="mSZ-V5-EYZ" secondAttribute="top" id="g1t-cw-Bc7"/>
+                            <constraint firstItem="mSZ-V5-EYZ" firstAttribute="bottom" secondItem="WAk-BX-2Us" secondAttribute="bottom" id="qKE-nc-myC"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Map" id="LO8-8q-txv"/>
+                    <connections>
+                        <outlet property="mapView" destination="WAk-BX-2Us" id="N1j-Tu-a0V"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4mc-ik-JnU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="937" y="739"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="j5i-e8-Bwh">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="ehg-me-pdJ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="QiR-Hi-NEg">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="u4e-5r-VeS" kind="relationship" relationship="viewControllers" id="Lbg-E6-HBY"/>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="CNa-es-mBC"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="12p-Zr-ezE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="9.9236641221374047" y="3.5211267605633805"/>
         </scene>
     </scenes>
     <resources>
