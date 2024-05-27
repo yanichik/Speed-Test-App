@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		8409742D2BFFFC6500D56C55 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8409742B2BFFFC6500D56C55 /* NetworkManager.swift */; };
+		840974302C05483D00D56C55 /* SpeedTestResultsModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8409742E2C05483D00D56C55 /* SpeedTestResultsModel+CoreDataClass.swift */; };
+		840974312C05483D00D56C55 /* SpeedTestResultsModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8409742F2C05483D00D56C55 /* SpeedTestResultsModel+CoreDataProperties.swift */; };
 		845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */; };
 		845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60002BF95CC8001BE8A2 /* MapVC.swift */; };
-		845F60082BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60062BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift */; };
-		845F60092BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60072BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataProperties.swift */; };
 		84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAA2BF40CAF0094A661 /* AppDelegate.swift */; };
 		84B3BFAD2BF40CAF0094A661 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAC2BF40CAF0094A661 /* SceneDelegate.swift */; };
 		84B3BFAF2BF40CAF0094A661 /* SpeedTestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAE2BF40CAF0094A661 /* SpeedTestVC.swift */; };
@@ -45,10 +45,10 @@
 
 /* Begin PBXFileReference section */
 		8409742B2BFFFC6500D56C55 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		8409742E2C05483D00D56C55 /* SpeedTestResultsModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeedTestResultsModel+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		8409742F2C05483D00D56C55 /* SpeedTestResultsModel+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeedTestResultsModel+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		845F60002BF95CC8001BE8A2 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
-		845F60062BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeedTestResultsModel+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		845F60072BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeedTestResultsModel+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		84B3BFA72BF40CAF0094A661 /* SpeedTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeedTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B3BFAA2BF40CAF0094A661 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84B3BFAC2BF40CAF0094A661 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -119,8 +119,8 @@
 		845F5FFF2BF9528D001BE8A2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				845F60062BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift */,
-				845F60072BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataProperties.swift */,
+				8409742E2C05483D00D56C55 /* SpeedTestResultsModel+CoreDataClass.swift */,
+				8409742F2C05483D00D56C55 /* SpeedTestResultsModel+CoreDataProperties.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -323,11 +323,11 @@
 				84B3BFAF2BF40CAF0094A661 /* SpeedTestVC.swift in Sources */,
 				84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */,
 				84B3BFAD2BF40CAF0094A661 /* SceneDelegate.swift in Sources */,
+				840974302C05483D00D56C55 /* SpeedTestResultsModel+CoreDataClass.swift in Sources */,
+				840974312C05483D00D56C55 /* SpeedTestResultsModel+CoreDataProperties.swift in Sources */,
 				845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */,
 				845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */,
 				84B3BFB52BF40CAF0094A661 /* SpeedTest.xcdatamodeld in Sources */,
-				845F60082BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift in Sources */,
-				845F60092BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

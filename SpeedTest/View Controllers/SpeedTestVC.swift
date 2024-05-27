@@ -193,6 +193,11 @@ extension SpeedTestVC {
         }
     }
     
+//    func addCountyToTestResultInCoreData(county: String) {
+//        let existingResult = SpeedTestResultsModel(entity: NSEntityDescription, insertInto: <#T##NSManagedObjectContext?#>)
+//        
+//    }
+    
     func fetchSpeedTestResultsFromCoreData(onSuccess: @escaping ([SpeedTestResultsModel]?) -> Void, onFailure: @escaping (Error) -> Void){
         do {
             let allResults = try context.fetch(SpeedTestResultsModel.fetchRequest()) as? [SpeedTestResultsModel]
@@ -215,6 +220,22 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func internetTestFinish(result: SpeedTestResult) {
     addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps)
+        let location = CLLocation(latitude: result.locationLatitude, longitude: result.locationLongitude)
+        NetworkManager.shared.getCountyFromCoordinates(location: location) { county in
+            guard let county = county else {return}
+            print(county)
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "County", message: "Are you in \(county) County?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { action in
+//                    let fetchRequest = SpeedTestResultsModel.fetchRequest()
+//                    fetchRequest.predicate = NSPredicate(format: <#T##String#>, argumentArray: <#T##[Any]?#>)
+//                    
+                    print(action)
+                }))
+                alert.addAction(UIAlertAction(title: "No", style: .default))
+                self.present(alert, animated: true)
+            }
+        }
 //        print(result.downloadSpeed.mbps)
 //        print(result.uploadSpeed.mbps)
 //        print(result.latencyInMs)
