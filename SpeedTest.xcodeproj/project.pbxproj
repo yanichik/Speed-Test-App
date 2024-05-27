@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8409742D2BFFFC6500D56C55 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8409742B2BFFFC6500D56C55 /* NetworkManager.swift */; };
 		845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */; };
 		845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60002BF95CC8001BE8A2 /* MapVC.swift */; };
 		845F60082BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60062BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8409742B2BFFFC6500D56C55 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		845F60002BF95CC8001BE8A2 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
 		845F60062BFD1DA7001BE8A2 /* SpeedTestResultsModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeedTestResultsModel+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
@@ -90,6 +92,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8409742C2BFFFC6500D56C55 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				8409742B2BFFFC6500D56C55 /* NetworkManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		845F5FF12BF4139E001BE8A2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +149,7 @@
 		84B3BFA92BF40CAF0094A661 /* SpeedTest */ = {
 			isa = PBXGroup;
 			children = (
+				8409742C2BFFFC6500D56C55 /* Managers */,
 				845F5FFF2BF9528D001BE8A2 /* Models */,
 				84B3BFAA2BF40CAF0094A661 /* AppDelegate.swift */,
 				84B3BFAC2BF40CAF0094A661 /* SceneDelegate.swift */,
@@ -308,6 +319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8409742D2BFFFC6500D56C55 /* NetworkManager.swift in Sources */,
 				84B3BFAF2BF40CAF0094A661 /* SpeedTestVC.swift in Sources */,
 				84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */,
 				84B3BFAD2BF40CAF0094A661 /* SceneDelegate.swift in Sources */,
