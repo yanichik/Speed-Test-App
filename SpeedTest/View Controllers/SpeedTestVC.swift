@@ -185,6 +185,7 @@ extension SpeedTestVC {
         newResult.longitude = longitude
         newResult.downloadSpeedMbps = downloadSpeed
         newResult.uploadSpeedMbps = uploadSpeed
+        newResult.date = Date()
         do {
             try context.save()
         } catch {
