@@ -180,10 +180,10 @@ class NetworkManager {
             }
 //            print("placemarks found: \(placemarks)")
             if let placemark = placemarks?.first {
-                print("country is: \(placemark.country!)")
-                print("admin area is: \(placemark.administrativeArea!)")
+//                print("country is: \(placemark.country!)")
+//                print("admin area is: \(placemark.administrativeArea!)")
 //                print("\n\nfirst placemark: \(placemark)")
-                var county = self.removeCountyFromString(placemark.subAdministrativeArea)
+                let county = self.removeCountyFromString(placemark.subAdministrativeArea)
                 completion(county)
             } else {
                 print("No county available based on provided info")
@@ -198,11 +198,11 @@ class NetworkManager {
         if !countyArr.isEmpty {
             countyArr.removeLast()
         }
-        var countyName = countyArr.joined(separator: " ")
+        let countyName = countyArr.joined(separator: " ")
         return countyName
     }
     
-    func getEntityCode(searchString: String, entityType: EntityType, completion: @escaping (String?) -> String?) -> Void {
+    func getEntityCode(searchString: String, entityType: EntityType, completion: @escaping (String?) -> Void) -> Void {
         guard let url = URL(string: baseUrlString + "/entities/query?" + "entityType=\(entityType)" + "&" + "search=\(searchString)") else {
             completion(nil)
             return
@@ -216,13 +216,10 @@ class NetworkManager {
                 return
             } else {
                 guard let d = data else { return }
-                //                print(String(data: d, encoding: .utf8)!)
                 self.parseJSON(data: d, forType: EntitiesLookup.self) { entityLookup in
                     if let data = entityLookup?.data {
                         guard let code = data.first?.code else { return }
-//                        print("pre: \(entityCode)")
                         entityCode = code
-//                        print("post: \(entityCode)")
                         completion(entityCode)
                     }
                     else {
@@ -235,32 +232,35 @@ class NetworkManager {
     
 //    func getOutageScoreForEntity(entityCode: String, completion: @escaping (OutageSummary?) -> SummaryData?) -> Void{
     func getOutageScoreForEntity(searchString: String, entityType: EntityType, from: String, until: String, completion: @escaping (Scores?) -> Void) -> Void{
-        guard let url = URL(string: baseUrlString + "/outages/summary?" + "entityType=\(entityType)" + "&" + "from=\(from)" + "&" + "until=\(until)") else {
-            completion(nil)
-            return
-        }
-        print(url.absoluteString)
-        getRequest(url: url) { (data, response, error) in
-            print((response as! HTTPURLResponse).statusCode)
-            if let e = error {
-                print("Request error: \(e)")
+        getEntityCode(searchString: searchString, entityType: entityType, completion: { code in
+            guard let receivedCode = code else { return }
+            guard let url = URL(string: self.baseUrlString + "/outages/summary?" + "entityType=\(entityType)" + "&" + "entityCode=\(receivedCode)" + "&" + "from=\(from)" + "&" + "until=\(until)") else {
+                completion(nil)
                 return
-            } else {
-                guard let d = data else { return }
-                //                print(String(data: d, encoding: .utf8)!)
-                self.parseJSON(data: d, forType: OutageSummary.self) { outageSummary in
-                    if let summary = outageSummary {
-                        guard let summaryData = summary.data?.first else { return }
-                        guard let scores = summaryData?.scores else { return }
-//                        print("post: \(entityCode)")
-//                        guard let overallScore = scores.overall else { return }
-                        completion(scores)
-                    }
-                    else {
-                        completion(nil)
+            }
+            print(url.absoluteString)
+            self.getRequest(url: url) { (data, response, error) in
+                print((response as! HTTPURLResponse).statusCode)
+                if let e = error {
+                    print("Request error: \(e)")
+                    return
+                } else {
+                    guard let d = data else { return }
+                    //                print(String(data: d, encoding: .utf8)!)
+                    self.parseJSON(data: d, forType: OutageSummary.self) { outageSummary in
+                        if let summary = outageSummary {
+                            guard let summaryData = summary.data?.first else { return }
+                            guard let scores = summaryData?.scores else { return }
+                            //                        print("post: \(entityCode)")
+                            //                        guard let overallScore = scores.overall else { return }
+                            completion(scores)
+                        }
+                        else {
+                            completion(nil)
+                        }
                     }
                 }
             }
-        }
+        })
     }
 }
