@@ -8,16 +8,21 @@
 import UIKit
 import MapKit
 import CoreLocation
+import CoreData
 
 class MapVC: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var saveLocationBtn: UIButton!
     
     let locationManager = CLLocationManager()
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        configureSaveLocationBtn()
         checkLocationServices()
         populateTestResults()
         
@@ -30,6 +35,76 @@ class MapVC: UIViewController {
         super.viewWillAppear(animated)
         checkLocationServices()
         populateTestResults()
+    }
+    
+    func configureSaveLocationBtn() {
+        saveLocationBtn.backgroundColor = .white
+        saveLocationBtn.layer.borderColor = saveLocationBtn.tintColor.cgColor
+        saveLocationBtn.layer.borderWidth = 2
+        saveLocationBtn.layer.cornerRadius = saveLocationBtn.bounds.height/2
+        saveLocationBtn.addTarget(self, action: #selector(saveCustomLocationTapped), for: .touchUpInside)
+    }
+    
+    @objc func saveCustomLocationTapped() {
+        // get current location long and lat
+        guard let currentLocation = locationManager.location?.coordinate else { return }
+        var savedLocationsWithin100Meters = [String]()
+        if let customLocations = fetchSavedCustomLocationsFromCoreData() {
+            for location in customLocations {
+                let customCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+                let currentCLLocation = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
+                // TODO: change to 100 meters
+                if customCLLocation.distance(from: currentCLLocation) <= 100000 {  // check if current location within 100 meters of each custom location
+                    savedLocationsWithin100Meters.append(location.locationName!)
+                }
+            }
+            if !savedLocationsWithin100Meters.isEmpty {
+                savedLocationsWithin100Meters.sort()
+                let inRangeLocationsAlert = UIAlertController(title: "Save Location", message: "Is current location any one of these already saved custom locations?", preferredStyle: .actionSheet)
+                inRangeLocationsAlert.addAction(UIAlertAction(title: "Save New Location", style: .cancel, handler: { action in
+                    self.saveNewCustomLocation(location: currentLocation)
+                }))
+                for location in savedLocationsWithin100Meters {
+                    inRangeLocationsAlert.addAction(UIAlertAction(title: location, style: .default, handler: { action in
+                        print("Selected \(String(describing: location))")
+                    }))
+                }
+                present(inRangeLocationsAlert, animated: true)
+            } else {
+                saveNewCustomLocation(location: currentLocation)
+            }
+        }
+        // alert asking if this falls under any existing custom locations - if yes do nothing (for now)
+            // if not add custom location
+            // TODO: group together with other existing locations if
+            // TODO: in SpeedTestVC - ask if to add to any custom locations ONLY IF within existing custom locations inside 100 meters
+    }
+    func saveNewCustomLocation(location: CLLocationCoordinate2D) {
+        let newCustomLocation = CustomLocationModel(context: context)
+        newCustomLocation.latitude = location.latitude
+        newCustomLocation.longitude = location.longitude
+        let newLocationAlert = UIAlertController(title: "Save Custom Location", message: "Provide name for new custom location", preferredStyle: .alert)
+        newLocationAlert.addTextField()
+        newLocationAlert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak self] action in
+            newCustomLocation.locationName = newLocationAlert.textFields?.first?.text
+            do {
+                try self?.context.save()
+            } catch {
+                print("Error while saving: \(error)")
+            }
+        }))
+        newLocationAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(newLocationAlert, animated: true)
+    }
+    
+    func fetchSavedCustomLocationsFromCoreData() -> [CustomLocationModel]?{
+        do {
+            let allSavedLocations = try context.fetch(CustomLocationModel.fetchRequest()) as? [CustomLocationModel]
+            return allSavedLocations
+        } catch {
+            print("Error while fetching saved custom locations from Core Data: \(error)")
+            return nil
+        }
     }
     
     @objc func applicationWillEnterForeground(){
@@ -48,7 +123,7 @@ class MapVC: UIViewController {
                        let time = result.date?.formatted(Date.FormatStyle(time: .shortened)) {
                         let annotation = MKPointAnnotation()
                         annotation.coordinate = CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)
-                        annotation.title = date + "\n\(time)"
+                        annotation.title = "\(result.county ?? String("No County"))" + "\n\(date)" + "\n\(time)"
                         annotation.subtitle = "DL: \(result.downloadSpeedMbps.rounded(.towardZero))Mbps\nUL: \(result.uploadSpeedMbps.rounded(.up))Mbps"
                         self?.mapView.addAnnotation(annotation)
                     }
@@ -117,7 +192,7 @@ class MapVC: UIViewController {
     
     func centerViewOnUserLocation() {
         if let location = locationManager.location?.coordinate {
-            let region = MKCoordinateRegion.init(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
+            let region = MKCoordinateRegion.init(center: location, latitudinalMeters: 2000, longitudinalMeters: 2000)
             mapView.setRegion(region, animated: true)
         }
     }
