@@ -134,8 +134,8 @@ class SpeedTestVC: UIViewController {
             }
         }
         signalHelper = SCSignalHelper()
-        let signalStrength = signalHelper?.getSignalStrengh()
-        print("signalStrength: \(String(describing: signalStrength?.wiFiStrength?.convertToDB() ?? 0))")
+//        let signalStrength = signalHelper?.getSignalStrengh()
+//        print("signalStrength: \(String(describing: signalStrength?.wiFiStrength?.convertToDB() ?? 0))")
     }
     
     func phaseOutProgressBars() {
@@ -222,21 +222,30 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     func internetTestFinish(result: SpeedTestResult) {
         let addedTestResult = addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps)
         let location = CLLocation(latitude: result.locationLatitude, longitude: result.locationLongitude)
-        NetworkManager.shared.getCountyFromCoordinates(location: location) { county in
+        NetworkManager.shared.getCountyFromCoordinates(location: location) { [weak self] county in
             guard let county = county else {return}
-            print(county)
             DispatchQueue.main.async {
+//                toSaveNewLocationAlert()
+//                isExistingLocationAlert()
                 let alert = UIAlertController(title: "County", message: "Are you in \(county) County?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { action in
                     addedTestResult.county = county
                     do {
-                        try self.context.save()
+                        try self?.context.save()
                     } catch {
                         print("Data saving error: \(error)")
                     }
+                    let currentTimestamp = Int(Date().timeIntervalSince1970)
+                    let twoHoursBackTimestamp = currentTimestamp - 700000000
+                    NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+                        if let overall = scores?.overall {
+                            self?.showOutageAlert(overall, county)
+//                            print("Overall Score: \(overall)")
+                        }
+                    }
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .default))
-                self.present(alert, animated: true)
+                self?.present(alert, animated: true)
             }
         }
 //        print(result.downloadSpeed.mbps)
@@ -245,13 +254,31 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
         
     }
     
+    func showOutageAlert(_ overall: Double, _ county: String) {
+        guard let formattedOverall = formatDouble(overall) else { return }
+        let outageAlert = UIAlertController(title: "2-Hour Outage Alert", message: "", preferredStyle: .alert)
+        outageAlert.message = "\(county) County has an Internet Outage Score of \(formattedOverall) that could be affecting your connectivity."
+        outageAlert.addAction(UIAlertAction(title: "OK", style: .cancel))
+        DispatchQueue.main.async { [weak self] in
+            self?.present(outageAlert, animated: true)
+        }
+    }
+    
+    func formatDouble(_ num: Double) -> String? {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        numberFormatter.groupingSeparator = ","
+        numberFormatter.maximumFractionDigits = 0
+        return numberFormatter.string(from: NSNumber(value: num))
+    }
+    
     func internetTestReceived(servers: [SpeedTestServer]) {
-        print(servers)
+//        print(servers)
     }
     
     func internetTestSelected(server: SpeedTestServer, latency: Int, jitter: Int) {
-        print("Latency: \(latency)")
-        print("Jitter: \(jitter)")
+//        print("Latency: \(latency)")
+//        print("Jitter: \(jitter)")
     }
     
     func internetTestDownloadStart() {
@@ -264,10 +291,10 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func internetTestDownload(progress: Double, speed: SpeedTestSpeed) {
         downloadProgress.progress = progress
-        print("downloadProgress.progress = \(progress)")
+//        print("downloadProgress.progress = \(progress)")
         //        downloadProgress.speedLabel.text = "\(Int(speed.mbps)) Mbps"
         downloadProgress.speed = Int(speed.mbps)
-        print("Download: \(speed.descriptionInMbps)")
+//        print("Download: \(speed.descriptionInMbps)")
     }
     
     func internetTestUploadStart() {
@@ -280,10 +307,10 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func internetTestUpload(progress: Double, speed: SpeedTestSpeed) {
         uploadProgress.progress = progress
-        print("uploadProgress.progress = \(progress)")
+//        print("uploadProgress.progress = \(progress)")
         //        uploadProgress.speedLabel.text = "\(Int(speed.mbps)) Mbps"
         uploadProgress.speed = Int(speed.mbps)
-        print("Upload: \(speed.descriptionInMbps)")
+//        print("Upload: \(speed.descriptionInMbps)")
     }
 }
 // MARK: - CLLocationManagerDelegate
