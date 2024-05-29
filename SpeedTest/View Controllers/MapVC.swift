@@ -51,11 +51,13 @@ class MapVC: UIViewController {
         var savedLocationsWithin100Meters = [String]()
         if let customLocations = fetchSavedCustomLocationsFromCoreData() {
             for location in customLocations {
-                let customCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
-                let currentCLLocation = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
-                // TODO: change to 100 meters
-                if customCLLocation.distance(from: currentCLLocation) <= 100000 {  // check if current location within 100 meters of each custom location
-                    savedLocationsWithin100Meters.append(location.locationName!)
+                if let locationName = location.locationName {
+                    let customCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+                    let currentCLLocation = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
+                    // TODO: change to 100 meters
+                    if customCLLocation.distance(from: currentCLLocation) <= 100000 {  // check if current location within 100 meters of each custom location
+                        savedLocationsWithin100Meters.append(locationName)
+                    }
                 }
             }
             if !savedLocationsWithin100Meters.isEmpty {
@@ -66,7 +68,7 @@ class MapVC: UIViewController {
                 }))
                 for location in savedLocationsWithin100Meters {
                     inRangeLocationsAlert.addAction(UIAlertAction(title: location, style: .default, handler: { action in
-                        print("Selected \(String(describing: location))")
+//                        print("Selected \(String(describing: location))")
                     }))
                 }
                 present(inRangeLocationsAlert, animated: true)
