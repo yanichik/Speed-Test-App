@@ -179,7 +179,7 @@ extension SpeedTestVC {
 
 // MARK: - InternetSpeedTestResult Core Data
 extension SpeedTestVC {
-    func addSpeedTestResultsToCoreData(latitude: Double, longitude: Double, downloadSpeed: Double, uploadSpeed: Double){
+    func addSpeedTestResultsToCoreData(latitude: Double, longitude: Double, downloadSpeed: Double, uploadSpeed: Double) -> SpeedTestResultsModel{
         let newResult = SpeedTestResultsModel(context: context)
         newResult.latitude = latitude
         newResult.longitude = longitude
@@ -191,6 +191,7 @@ extension SpeedTestVC {
         } catch {
             print("Data saving error: \(error)")
         }
+        return newResult
     }
     
 //    func addCountyToTestResultInCoreData(county: String) {
@@ -219,7 +220,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     }
     
     func internetTestFinish(result: SpeedTestResult) {
-    addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps)
+        let addedTestResult = addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps)
         let location = CLLocation(latitude: result.locationLatitude, longitude: result.locationLongitude)
         NetworkManager.shared.getCountyFromCoordinates(location: location) { county in
             guard let county = county else {return}
@@ -227,10 +228,12 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "County", message: "Are you in \(county) County?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { action in
-//                    let fetchRequest = SpeedTestResultsModel.fetchRequest()
-//                    fetchRequest.predicate = NSPredicate(format: <#T##String#>, argumentArray: <#T##[Any]?#>)
-//                    
-                    print(action)
+                    addedTestResult.county = county
+                    do {
+                        try self.context.save()
+                    } catch {
+                        print("Data saving error: \(error)")
+                    }
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .default))
                 self.present(alert, animated: true)
