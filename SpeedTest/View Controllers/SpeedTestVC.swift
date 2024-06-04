@@ -236,7 +236,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                         print("Data saving error: \(error)")
                     }
                     let currentTimestamp = Int(Date().timeIntervalSince1970)
-                    let twoHoursBackTimestamp = currentTimestamp - 700000000
+                    let twoHoursBackTimestamp = currentTimestamp - 7200
                     NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
                         if let overall = scores?.overall {
                             self?.showOutageAlert(overall, county)
