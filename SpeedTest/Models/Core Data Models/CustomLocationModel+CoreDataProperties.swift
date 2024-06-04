@@ -2,7 +2,7 @@
 //  CustomLocationModel+CoreDataProperties.swift
 //  SpeedTest
 //
-//  Created by admin on 5/31/24.
+//  Created by admin on 5/28/24.
 //
 //
 
@@ -16,9 +16,9 @@ extension CustomLocationModel {
         return NSFetchRequest<CustomLocationModel>(entityName: "CustomLocationModel")
     }
 
-    @NSManaged public var latitude: Double
     @NSManaged public var locationName: String?
     @NSManaged public var longitude: Double
+    @NSManaged public var latitude: Double
 
 }
 
