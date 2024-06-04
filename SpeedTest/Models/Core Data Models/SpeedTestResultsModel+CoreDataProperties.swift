@@ -2,7 +2,7 @@
 //  SpeedTestResultsModel+CoreDataProperties.swift
 //  SpeedTest
 //
-//  Created by admin on 5/31/24.
+//  Created by admin on 5/28/24.
 //
 //
 
@@ -21,8 +21,8 @@ extension SpeedTestResultsModel {
     @NSManaged public var downloadSpeedMbps: Double
     @NSManaged public var latitude: Double
     @NSManaged public var longitude: Double
-    @NSManaged public var savedLocationName: String?
     @NSManaged public var uploadSpeedMbps: Double
+    @NSManaged public var savedLocationName: String?
 
 }
 

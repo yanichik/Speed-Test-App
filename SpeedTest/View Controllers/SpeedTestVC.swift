@@ -24,6 +24,7 @@ class SpeedTestVC: UIViewController {
     private var signalHelper: SCSignalHelper?
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var currentTestResult: SpeedTestResultsModel?
     
     var testResultsArray = Array<SpeedTestResultsModel>()
     
@@ -76,7 +77,7 @@ class SpeedTestVC: UIViewController {
     
     @objc func stopBtnTapped() {
         internetTest?.forceFinish({ error in
-            print(error)
+            print(error.rawValue)
         })
     }
     
@@ -220,38 +221,78 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     }
     
     func internetTestFinish(result: SpeedTestResult) {
-        let addedTestResult = addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps)
-        let location = CLLocation(latitude: result.locationLatitude, longitude: result.locationLongitude)
-        NetworkManager.shared.getCountyFromCoordinates(location: location) { [weak self] county in
-            guard let county = county else {return}
-            DispatchQueue.main.async {
-//                toSaveNewLocationAlert()
-//                isExistingLocationAlert()
-                let alert = UIAlertController(title: "County", message: "Are you in \(county) County?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { action in
-                    addedTestResult.county = county
+        DispatchQueue.main.async { [weak self] in
+            guard let addedTestResult = self?.addSpeedTestResultsToCoreData(latitude: result.locationLatitude, longitude: result.locationLongitude, downloadSpeed: result.downloadSpeed.mbps, uploadSpeed: result.uploadSpeed.mbps) else { return }
+            self?.currentTestResult = addedTestResult
+            let myLocation = CLLocation(latitude: result.locationLatitude, longitude: result.locationLongitude)
+            NetworkManager.shared.getCountyFromCoordinates(location: myLocation) { [weak self] county in
+                guard let county = county else {return}
+                guard let mapVC = self?.tabBarController?.viewControllers?.first(where: {$0 is MapVC}) as? MapVC else { return }
+                var savedLocationsWithin30Meters = [CustomLocationModel]()
+                if let customLocations = mapVC.fetchSavedCustomLocationsFromCoreData() {
+                    for customLocation in customLocations {
+                        let customSavedCLLocation = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
+                        // If current location w/in 30m of existing custom saved location then alert asking if it's the location
+                        if customSavedCLLocation.distance(from: myLocation) <= 30 {  // check if current location within 100 meters of each custom location
+                            savedLocationsWithin30Meters.append(customLocation)
+                        }
+                    }
+                }
+                if !savedLocationsWithin30Meters.isEmpty{
+                    self?.isExistingLocationAlert(myLocation, savedLocationsWithin30Meters, mapVC, county: county, addedTestResult: addedTestResult)
+                } else {
+                    self?.saveNewLocationAlert(myLocation, mapVC, county: county, addedTestResult: addedTestResult)
+                }
+            }
+        }
+    }
+    
+    func isExistingLocationAlert(_ myLocation: CLLocation, _ savedLocations: [CustomLocationModel], _ passingVC: UIViewController, county: String, addedTestResult: SpeedTestResultsModel){
+        let alert = UIAlertController(title: "Existing Location", message: "Are you currently at one of the nearby saved locations?", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "No, please add this new location.", style: .cancel, handler: { action in
+            // TODO: add new location
+            self.saveNewLocationAlert(myLocation, passingVC, county: county, addedTestResult: addedTestResult)
+        }))
+        for location in savedLocations {
+            if let name = location.locationName {
+                alert.addAction(UIAlertAction(title: name, style: .default, handler: { action in
+                    // TODO: set savedLocationName
+                    self.currentTestResult?.savedLocationName = action.title
                     do {
-                        try self?.context.save()
+                        try self.context.save()
                     } catch {
                         print("Data saving error: \(error)")
                     }
-                    let currentTimestamp = Int(Date().timeIntervalSince1970)
-                    let twoHoursBackTimestamp = currentTimestamp - 700000000
-                    NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
-                        if let overall = scores?.overall {
-                            self?.showOutageAlert(overall, county)
-//                            print("Overall Score: \(overall)")
-                        }
-                    }
+//
                 }))
-                alert.addAction(UIAlertAction(title: "No", style: .default))
-                self?.present(alert, animated: true)
             }
         }
-//        print(result.downloadSpeed.mbps)
-//        print(result.uploadSpeed.mbps)
-//        print(result.latencyInMs)
-        
+        present(alert, animated: true)
+    }
+    
+    func saveNewLocationAlert(_ myLocation: CLLocation, _ passingVC: UIViewController, county: String, addedTestResult: SpeedTestResultsModel){
+        let alert = UIAlertController(title: "Save Location", message: "Are you in \(county) County?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] action in
+            addedTestResult.county = county
+            if let mapVC = (self?.tabBarController?.viewControllers?.first(where: {$0 is MapVC}) as? MapVC) {
+                mapVC.saveNewCustomLocation(location: myLocation.coordinate)
+            }
+            do {
+                try self?.context.save()
+            } catch {
+                print("Data saving error: \(error)")
+            }
+            let currentTimestamp = Int(Date().timeIntervalSince1970)
+            let twoHoursBackTimestamp = currentTimestamp - 700000000
+            NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+                if let overall = scores?.overall {
+                    self?.showOutageAlert(overall, county)
+//                            print("Overall Score: \(overall)")
+                }
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .default))
+        present(alert, animated: true)
     }
     
     func showOutageAlert(_ overall: Double, _ county: String) {

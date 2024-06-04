@@ -22,6 +22,8 @@ class MapVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        mapView.register(CustomTestResultClusterView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
+        mapView.register(CustomPointAnnotation.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         configureSaveLocationBtn()
         checkLocationServices()
         populateTestResults()
@@ -120,16 +122,37 @@ class MapVC: UIViewController {
             testVC.fetchSpeedTestResultsFromCoreData { [weak self] results in
                 //TODO: add results annotations
                 guard let results = results else { return }
+                var annotationViews = [CustomTestResultClusterView]()
+                var pointAnnotations = [String:[CustomPointAnnotation]]()
                 for result in results {
                     if let date = result.date?.formatted(Date.FormatStyle(date: .abbreviated)),
                        let time = result.date?.formatted(Date.FormatStyle(time: .shortened)) {
-                        let annotation = MKPointAnnotation()
-                        annotation.coordinate = CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)
-                        annotation.title = "\(result.county ?? String("No County"))" + "\n\(date)" + "\n\(time)"
+                        let annotation = CustomPointAnnotation(latitude: result.latitude, longitude: result.longitude)
+//                        annotation.coordinate = CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)
+                        annotation.title = "\(result.savedLocationName ?? String("NA"))" // + "\n\(date)" + "\n\(time)"
+//                        let annotationView = CustomTestResultClusterView(annotation: annotation, reuseIdentifier: annotation.title)
                         annotation.subtitle = "DL: \(result.downloadSpeedMbps.rounded(.towardZero))Mbps\nUL: \(result.uploadSpeedMbps.rounded(.up))Mbps"
-                        self?.mapView.addAnnotation(annotation)
+                        if let name = result.savedLocationName {
+                            if pointAnnotations.contains(where: { (key: String, value: [CustomPointAnnotation]) in
+                                return key == name
+                            }){
+                                pointAnnotations[name]?.append(annotation)
+                            } else {
+                                pointAnnotations[name] = [annotation]
+                            }
+                        } else {
+                            self?.mapView.addAnnotation(annotation)
+                        }
                     }
                 }
+                for (key, annotations) in pointAnnotations {
+                    for annotation in annotations {
+                        let clusterView = CustomTestResultClusterView(annotation: annotation, reuseIdentifier: key)
+                        annotationViews.append(clusterView)
+                    }
+                    self?.mapView.addAnnotations(annotations)
+                }
+//                self?.mapView.addAnnotations(annotationViews)
             } onFailure: { error in
                 //TODO: show error alert
                 let alert = UIAlertController(title: "Fetch Results Error", message: "An error occurred while fetching your results history. Please try again.", preferredStyle: .alert)
@@ -227,6 +250,26 @@ extension MapVC: MKMapViewDelegate {
 //              view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
 //            }
 //            return view
+//    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
+        print("current annotation being dropped is: \(annotation.description)")
+        guard !(annotation is MKUserLocation) else { return nil } // If MKUserLocation type then will use default user location annotation
+        switch annotation {
+        case is MKClusterAnnotation:
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier, for: annotation)
+            view.clusteringIdentifier = String(describing: annotation.title)
+            return view
+        case is MKPointAnnotation:
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+            return view
+        default:
+            return nil
+        }
+    }
+    
+//    func mapView(_ mapView: MKMapView, clusterAnnotationForMemberAnnotations memberAnnotations: [any MKAnnotation]) -> MKClusterAnnotation {
+//        <#code#>
 //    }
 }
 
