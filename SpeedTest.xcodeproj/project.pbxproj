@@ -8,12 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		8409742D2BFFFC6500D56C55 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8409742B2BFFFC6500D56C55 /* NetworkManager.swift */; };
+		840CBE4F2C18CCB9006342A4 /* CustomTestResultClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2882C0A9C970083603B /* CustomTestResultClusterView.swift */; };
 		841AE2842C0A9C780083603B /* SpeedTestResultsModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2802C0A9C780083603B /* SpeedTestResultsModel+CoreDataClass.swift */; };
 		841AE2852C0A9C780083603B /* SpeedTestResultsModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2812C0A9C780083603B /* SpeedTestResultsModel+CoreDataProperties.swift */; };
 		841AE2862C0A9C780083603B /* CustomLocationModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2822C0A9C780083603B /* CustomLocationModel+CoreDataClass.swift */; };
 		841AE2872C0A9C780083603B /* CustomLocationModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2832C0A9C780083603B /* CustomLocationModel+CoreDataProperties.swift */; };
-		841AE2892C0A9C970083603B /* CustomTestResultClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2882C0A9C970083603B /* CustomTestResultClusterView.swift */; };
 		841AE28F2C0BEF9F0083603B /* CustomPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE28E2C0BEF9F0083603B /* CustomPointAnnotation.swift */; };
+		841AE2B72C149B400083603B /* CustomPointAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2B62C149B400083603B /* CustomPointAnnotationView.swift */; };
+		841AE2BB2C18AE2B0083603B /* CustomPointAnnotationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 841AE2BA2C18AE2B0083603B /* CustomPointAnnotationView.xib */; };
+		841AE2BE2C18B0650083603B /* CircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841AE2BC2C18B0650083603B /* CircleImageView.swift */; };
+		841AE2C12C18B6280083603B /* CustomTestResultClusterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 841AE2C02C18B6270083603B /* CustomTestResultClusterView.xib */; };
 		845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */; };
 		845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60002BF95CC8001BE8A2 /* MapVC.swift */; };
 		84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAA2BF40CAF0094A661 /* AppDelegate.swift */; };
@@ -55,6 +59,10 @@
 		841AE2832C0A9C780083603B /* CustomLocationModel+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomLocationModel+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		841AE2882C0A9C970083603B /* CustomTestResultClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTestResultClusterView.swift; sourceTree = "<group>"; };
 		841AE28E2C0BEF9F0083603B /* CustomPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPointAnnotation.swift; sourceTree = "<group>"; };
+		841AE2B62C149B400083603B /* CustomPointAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPointAnnotationView.swift; sourceTree = "<group>"; };
+		841AE2BA2C18AE2B0083603B /* CustomPointAnnotationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomPointAnnotationView.xib; sourceTree = "<group>"; };
+		841AE2BC2C18B0650083603B /* CircleImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleImageView.swift; sourceTree = "<group>"; };
+		841AE2C02C18B6270083603B /* CustomTestResultClusterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomTestResultClusterView.xib; sourceTree = "<group>"; };
 		845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		845F60002BF95CC8001BE8A2 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
 		84B3BFA72BF40CAF0094A661 /* SpeedTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeedTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +127,14 @@
 			path = "Core Data Models";
 			sourceTree = "<group>";
 		};
+		841AE2BD2C18B0650083603B /* IBDesignables */ = {
+			isa = PBXGroup;
+			children = (
+				841AE2BC2C18B0650083603B /* CircleImageView.swift */,
+			);
+			path = IBDesignables;
+			sourceTree = "<group>";
+		};
 		845F5FF12BF4139E001BE8A2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,7 +156,10 @@
 			children = (
 				841AE27F2C0A9C310083603B /* Core Data Models */,
 				841AE2882C0A9C970083603B /* CustomTestResultClusterView.swift */,
+				841AE2C02C18B6270083603B /* CustomTestResultClusterView.xib */,
 				841AE28E2C0BEF9F0083603B /* CustomPointAnnotation.swift */,
+				841AE2B62C149B400083603B /* CustomPointAnnotationView.swift */,
+				841AE2BA2C18AE2B0083603B /* CustomPointAnnotationView.xib */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -175,6 +194,7 @@
 				84B3BFAC2BF40CAF0094A661 /* SceneDelegate.swift */,
 				845F5FFC2BF94E5F001BE8A2 /* View Controllers */,
 				84B3BFB02BF40CAF0094A661 /* Main.storyboard */,
+				841AE2BD2C18B0650083603B /* IBDesignables */,
 				845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */,
 				84B3BFB62BF40CB00094A661 /* Assets.xcassets */,
 				84B3BFB82BF40CB00094A661 /* LaunchScreen.storyboard */,
@@ -314,6 +334,8 @@
 			files = (
 				84B3BFB72BF40CB00094A661 /* Assets.xcassets in Resources */,
 				84B3BFBA2BF40CB00094A661 /* Base in Resources */,
+				841AE2C12C18B6280083603B /* CustomTestResultClusterView.xib in Resources */,
+				841AE2BB2C18AE2B0083603B /* CustomPointAnnotationView.xib in Resources */,
 				84B3BFB22BF40CAF0094A661 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,6 +361,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				840CBE4F2C18CCB9006342A4 /* CustomTestResultClusterView.swift in Sources */,
 				8409742D2BFFFC6500D56C55 /* NetworkManager.swift in Sources */,
 				84B3BFAF2BF40CAF0094A661 /* SpeedTestVC.swift in Sources */,
 				84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */,
@@ -346,11 +369,12 @@
 				845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */,
 				845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */,
 				841AE2842C0A9C780083603B /* SpeedTestResultsModel+CoreDataClass.swift in Sources */,
+				841AE2B72C149B400083603B /* CustomPointAnnotationView.swift in Sources */,
 				841AE2852C0A9C780083603B /* SpeedTestResultsModel+CoreDataProperties.swift in Sources */,
 				841AE2862C0A9C780083603B /* CustomLocationModel+CoreDataClass.swift in Sources */,
 				841AE2872C0A9C780083603B /* CustomLocationModel+CoreDataProperties.swift in Sources */,
-				841AE2892C0A9C970083603B /* CustomTestResultClusterView.swift in Sources */,
 				84B3BFB52BF40CAF0094A661 /* SpeedTest.xcdatamodeld in Sources */,
+				841AE2BE2C18B0650083603B /* CircleImageView.swift in Sources */,
 				841AE28F2C0BEF9F0083603B /* CustomPointAnnotation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
