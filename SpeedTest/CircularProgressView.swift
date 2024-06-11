@@ -14,7 +14,6 @@ class CircularProgressView: UIView {
     var speedLabel = UILabel()
     var progressLabel = UILabel()
     var uploadDownloadLabel = UILabel()
-//    var circularProgressView = UIView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,8 +23,6 @@ class CircularProgressView: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-//        createCircularPath()
-//        fatalError("init(coder:) has not been implemented")
     }
     
     convenience init(withType type: String) {
@@ -36,7 +33,6 @@ class CircularProgressView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         createCircularPath()
-//        self.bringSubviewToFront(circularProgressView)
     }
     
     func configureUploadDownloadLabel(withType type: String) {
@@ -107,8 +103,6 @@ class CircularProgressView: UIView {
     fileprivate func createCircularPath() {
         self.backgroundColor = UIColor.clear
         self.layer.cornerRadius = self.frame.width/2
-//        circularProgressView.backgroundColor = UIColor.clear
-//        circularProgressView.layer.cornerRadius = self.frame.width/2
         let path = UIBezierPath(arcCenter: CGPoint(x: frame.width/2, y: frame.height/2), radius: (frame.width - 1.5)/2, startAngle: CGFloat(-0.5 * .pi), endAngle: CGFloat(1.5 * .pi), clockwise: true)
         trackLayer.path = path.cgPath
         trackLayer.fillColor = UIColor.clear.cgColor
@@ -116,7 +110,6 @@ class CircularProgressView: UIView {
         trackLayer.opacity = 0.5
         trackLayer.lineWidth = 10.0
         trackLayer.strokeEnd = 1.0
-//        circularProgressView.layer.addSublayer(trackLayer)
         self.layer.addSublayer(trackLayer)
 
         progressLayer.path = path.cgPath
@@ -125,8 +118,6 @@ class CircularProgressView: UIView {
         progressLayer.lineWidth = 10.0
         progressLayer.strokeEnd = 0.0
         self.layer.addSublayer(progressLayer)
-//        circularProgressView.layer.addSublayer(progressLayer)
-//        self.addSubview(circularProgressView)
     }
 
 }

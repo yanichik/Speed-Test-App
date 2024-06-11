@@ -11,7 +11,7 @@ import CoreLocation
 import CoreData
 
 class MapVC: UIViewController {
-
+    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var saveLocationBtn: UIButton!
     
@@ -34,14 +34,13 @@ class MapVC: UIViewController {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-
+        
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkLocationServices()
-        rePopulateTestResultsIfNeed()
     }
     
     override func viewDidLayoutSubviews() {
@@ -80,7 +79,6 @@ class MapVC: UIViewController {
                 }))
                 for location in savedLocationsWithin100Meters {
                     inRangeLocationsAlert.addAction(UIAlertAction(title: location, style: .default, handler: { action in
-//                        print("Selected \(String(describing: location))")
                     }))
                 }
                 present(inRangeLocationsAlert, animated: true)
@@ -89,9 +87,9 @@ class MapVC: UIViewController {
             }
         }
         // alert asking if this falls under any existing custom locations - if yes do nothing (for now)
-            // if not add custom location
-            // TODO: group together with other existing locations if
-            // TODO: in SpeedTestVC - ask if to add to any custom locations ONLY IF within existing custom locations inside 100 meters
+        // if not add custom location
+        // TODO: group together with other existing locations if
+        // TODO: in SpeedTestVC - ask if to add to any custom locations ONLY IF within existing custom locations inside 100 meters
     }
     func saveNewCustomLocation(location: CLLocationCoordinate2D, completion: ( (String) -> Void)? ) {
         let newCustomLocation = CustomLocationModel(context: context)
@@ -123,26 +121,22 @@ class MapVC: UIViewController {
     }
     
     @objc func applicationWillEnterForeground(){
-//        checkLocationServices()
+        //        checkLocationServices()
     }
     
     func populateTestResults(completion: @escaping ([CustomPointAnnotation]?) -> Void){
         var customPointAnnotations = [CustomPointAnnotation]()
         DispatchQueue.main.async { [weak self] in
             guard let testVC = self?.tabBarController?.viewControllers?.first(where: { $0 is SpeedTestVC }) as? SpeedTestVC else { return }
-            //        let testVC = SpeedTestVC()
             testVC.fetchSpeedTestResultsFromCoreData { [weak self] results in
                 //TODO: add results annotations
                 guard let fetchResults = results else { return }
-//                var annotationViews = [CustomTestResultClusterView]()
                 var pointAnnotations = [String:[CustomPointAnnotation]]()
                 for result in fetchResults {
                     if let _ = result.date?.formatted(Date.FormatStyle(date: .abbreviated)),
                        let _ = result.date?.formatted(Date.FormatStyle(time: .shortened)) {
                         let annotation = CustomPointAnnotation(latitude: result.latitude, longitude: result.longitude)
-//                        annotation.coordinate = CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)
                         annotation.title = "\(result.savedLocationName ?? String("NA"))" // + "\n\(date)" + "\n\(time)"
-//                        let annotationView = CustomTestResultClusterView(annotation: annotation, reuseIdentifier: annotation.title)
                         annotation.subtitle = "DL: \(result.downloadSpeedMbps.rounded(.towardZero))Mbps\nUL: \(result.uploadSpeedMbps.rounded(.up))Mbps"
                         if let name = result.savedLocationName {
                             if pointAnnotations.contains(where: { (key: String, value: [CustomPointAnnotation]) in
@@ -159,17 +153,11 @@ class MapVC: UIViewController {
                     }
                 }
                 for (_, annotations) in pointAnnotations {
-//                    for annotation in annotations {
-//                        let clusterView = CustomTestResultClusterView(annotation: annotation, reuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
-//                        annotationViews.append(clusterView)
-//                    }
                     self?.mapView.addAnnotations(annotations)
                     customPointAnnotations.append(contentsOf: annotations)
                 }
                 completion(customPointAnnotations)
-//                self?.mapView.addAnnotations(annotationViews)
             } onFailure: { error in
-                //TODO: show error alert
                 let alert = UIAlertController(title: "Fetch Results Error", message: "An error occurred while fetching your results history. Please try again.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Ok.", style: .default))
                 self?.present(alert, animated: true)
@@ -179,9 +167,6 @@ class MapVC: UIViewController {
     }
     
     func rePopulateTestResultsIfNeed() {
-//        currentAnnotations array in class level
-//        pull
-        guard mapAnnotations != nil else { return }
         guard let testVC = tabBarController?.viewControllers?.first(where: { $0 is SpeedTestVC }) as? SpeedTestVC else { return }
         testVC.fetchSpeedTestResultsFromCoreData { [weak self] results in
             guard let fetchResults = results else { return }
@@ -196,7 +181,6 @@ class MapVC: UIViewController {
                 }
             }
         } onFailure: { error in
-            //TODO: show error alert
             let alert = UIAlertController(title: "Fetch Results Error", message: "An error occurred while fetching your results history. Please try again.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok.", style: .default))
             self.present(alert, animated: true)
@@ -282,29 +266,21 @@ extension MapVC: MKMapViewDelegate {
             view.clusteringIdentifier = clusteringID
             return view
         case is MKClusterAnnotation:
-//            guard let view = mapView.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier, for: annotation) as? CustomTestResultClusterView else {
-                return CustomTestResultClusterView(annotation: annotation, reuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
-//            }
-//            view.clusteringIdentifier = clusteringID
-//            return view
+            return CustomTestResultClusterView(annotation: annotation, reuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         default:
             return nil
         }
     }
-    
-//    func mapView(_ mapView: MKMapView, clusterAnnotationForMemberAnnotations memberAnnotations: [any MKAnnotation]) -> MKClusterAnnotation {
-//        <#code#>
-//    }
 }
 
 // MARK: - CLLocationManagerDelegate
 extension MapVC: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //TODO
-//        guard let location = locations.last else { return }
-//        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-//        let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 1000, longitudinalMeters: 1000)
-//        mapView.setRegion (region, animated: true)
+        //        guard let location = locations.last else { return }
+        //        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        //        let region = MKCoordinateRegion.init(center: center, latitudinalMeters: 1000, longitudinalMeters: 1000)
+        //        mapView.setRegion (region, animated: true)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

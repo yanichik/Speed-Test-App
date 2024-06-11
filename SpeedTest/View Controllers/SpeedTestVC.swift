@@ -55,12 +55,6 @@ class SpeedTestVC: UIViewController {
         requestLocationAuthorization()
     }
     
-    //    override func viewDidLayoutSubviews() {
-    //        super.viewDidLayoutSubviews()
-    //
-    //        gradientLayer.frame = view.bounds
-    //    }
-    
     func configureStopButton() {
         stopBtn.setTitle("Stop Current Test", for: .normal)
         stopBtn.addTarget(self, action: #selector(stopBtnTapped), for: .touchUpInside)
@@ -94,11 +88,6 @@ class SpeedTestVC: UIViewController {
             downloadProgress.widthAnchor.constraint(equalToConstant: 125),
             downloadProgress.heightAnchor.constraint(equalToConstant: 125)
         ])
-        
-        // Uses Frame to setup size and location
-        //        downloadProgress.frame.size.width = 125
-        //        downloadProgress.frame.size.height = 125
-        //        downloadProgress.center = self.view.center
     }
     
     func configureUploadProgressBar() {
@@ -114,11 +103,6 @@ class SpeedTestVC: UIViewController {
             uploadProgress.widthAnchor.constraint(equalToConstant: 125),
             uploadProgress.heightAnchor.constraint(equalToConstant: 125)
         ])
-        
-        // Uses Frame to setup size and location
-        //        uploadProgress.frame.size.width = 125
-        //        uploadProgress.frame.size.height = 125
-        //        uploadProgress.center = self.view.center
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -195,11 +179,6 @@ extension SpeedTestVC {
         return newResult
     }
     
-//    func addCountyToTestResultInCoreData(county: String) {
-//        let existingResult = SpeedTestResultsModel(entity: NSEntityDescription, insertInto: <#T##NSManagedObjectContext?#>)
-//        
-//    }
-    
     func fetchSpeedTestResultsFromCoreData(onSuccess: @escaping ([SpeedTestResultsModel]?) -> Void, onFailure: @escaping (Error) -> Void){
         do {
             let allResults = try context.fetch(SpeedTestResultsModel.fetchRequest()) as? [SpeedTestResultsModel]
@@ -209,8 +188,8 @@ extension SpeedTestVC {
             onFailure(error)
         }
     }
-    
-//    func deleteSpeedTestResultFromCoreData
+    // TODO: add
+    // func deleteSpeedTestResultFromCoreData
 }
 
 
@@ -263,7 +242,6 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                     } catch {
                         print("Data saving error: \(error)")
                     }
-//
                 }))
             }
         }
@@ -288,7 +266,6 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
             if let mapVC = (self?.tabBarController?.viewControllers?.first(where: {$0 is MapVC}) as? MapVC) {
                 mapVC.saveNewCustomLocation(location: myLocation.coordinate) { [weak self] name in
                     if let savedTestResult = self?.fetchSavedTestResultFromCoreData(savedResult: addedTestResult) {
-//                        savedTestResult.savedLocationName = name.count > 0 ? name : nil
                         savedTestResult.setValue(name.count > 0 ? name : nil, forKey: "savedLocationName")
                         do {
                             try self?.context.save()
@@ -341,32 +318,23 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     }
     
     func internetTestReceived(servers: [SpeedTestServer]) {
-//        print(servers)
     }
     
     func internetTestSelected(server: SpeedTestServer, latency: Int, jitter: Int) {
-//        print("Latency: \(latency)")
-//        print("Jitter: \(jitter)")
     }
     
     func internetTestDownloadStart() {
-        //
     }
     
     func internetTestDownloadFinish() {
-        //
     }
     
     func internetTestDownload(progress: Double, speed: SpeedTestSpeed) {
         downloadProgress.progress = progress
-//        print("downloadProgress.progress = \(progress)")
-        //        downloadProgress.speedLabel.text = "\(Int(speed.mbps)) Mbps"
         downloadProgress.speed = Int(speed.mbps)
-//        print("Download: \(speed.descriptionInMbps)")
     }
     
     func internetTestUploadStart() {
-        //
     }
     
     func internetTestUploadFinish() {
@@ -375,10 +343,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func internetTestUpload(progress: Double, speed: SpeedTestSpeed) {
         uploadProgress.progress = progress
-//        print("uploadProgress.progress = \(progress)")
-        //        uploadProgress.speedLabel.text = "\(Int(speed.mbps)) Mbps"
         uploadProgress.speed = Int(speed.mbps)
-//        print("Upload: \(speed.descriptionInMbps)")
     }
 }
 // MARK: - CLLocationManagerDelegate
