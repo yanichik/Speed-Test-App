@@ -270,26 +270,53 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
         present(alert, animated: true)
     }
     
+    func fetchSavedTestResultFromCoreData(savedResult: SpeedTestResultsModel) -> SpeedTestResultsModel?{
+        let fetchTestResults = SpeedTestResultsModel.fetchRequest()
+        fetchTestResults.predicate = NSPredicate(format: "date == %@", savedResult.date! as NSDate)
+        let foundTestResult = try? context.fetch(fetchTestResults)
+        if foundTestResult?.count == 1 {
+            return foundTestResult![0]
+        } else {
+            return nil
+        }
+    }
+    
     func saveNewLocationAlert(_ myLocation: CLLocation, _ passingVC: UIViewController, county: String, addedTestResult: SpeedTestResultsModel){
         let alert = UIAlertController(title: "Save Location", message: "Are you in \(county) County?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] action in
             addedTestResult.county = county
             if let mapVC = (self?.tabBarController?.viewControllers?.first(where: {$0 is MapVC}) as? MapVC) {
-                mapVC.saveNewCustomLocation(location: myLocation.coordinate)
-            }
-            do {
-                try self?.context.save()
-            } catch {
-                print("Data saving error: \(error)")
-            }
-            let currentTimestamp = Int(Date().timeIntervalSince1970)
-            let twoHoursBackTimestamp = currentTimestamp - 700000000
-            NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
-                if let overall = scores?.overall {
-                    self?.showOutageAlert(overall, county)
-//                            print("Overall Score: \(overall)")
+                mapVC.saveNewCustomLocation(location: myLocation.coordinate) { [weak self] name in
+                    if let savedTestResult = self?.fetchSavedTestResultFromCoreData(savedResult: addedTestResult) {
+//                        savedTestResult.savedLocationName = name.count > 0 ? name : nil
+                        savedTestResult.setValue(name.count > 0 ? name : nil, forKey: "savedLocationName")
+                        do {
+                            try self?.context.save()
+                        } catch {
+                            print("Data saving error: \(error)")
+                        }
+                    }
+                    let currentTimestamp = Int(Date().timeIntervalSince1970)
+                    let twoHoursBackTimestamp = currentTimestamp - 700000000
+                    NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+                        if let overall = scores?.overall {
+                            self?.showOutageAlert(overall, county)
+                        }
+                    }
                 }
-            }
+            } else {
+                do {
+                    try self?.context.save()
+                } catch {
+                    print("Data saving error: \(error)")
+                }
+                let currentTimestamp = Int(Date().timeIntervalSince1970)
+                let twoHoursBackTimestamp = currentTimestamp - 700000000
+                NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+                    if let overall = scores?.overall {
+                        self?.showOutageAlert(overall, county)
+                    }
+                }}
         }))
         alert.addAction(UIAlertAction(title: "No", style: .default))
         present(alert, animated: true)
