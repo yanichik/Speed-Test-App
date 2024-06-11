@@ -115,13 +115,7 @@ struct MetaData: Codable {
     var responseTime: String?
 }
 
-//enum EntityType: Int {
 enum EntityType: String {
-//    case asn = "asn"
-//    case county = "county"
-//    case country = "country"
-//    case region = "region"
-//    case continent = "continent"
     case asn
     case county
     case country
@@ -161,13 +155,9 @@ class NetworkManager {
     func parseJSON<T: Codable>(data: Data, forType type: T.Type, completion: (T?) -> Void) -> Void {
         let decoder = JSONDecoder()
         do {
-//            print("type received: \(type)")
-//            print("stringified data: \n\n\(String(data: data, encoding: .utf8))")
             let responseData = try decoder.decode(type.self, from: data)
-//            print("have responseData: \(responseData)")
             completion(responseData)
         } catch {
-//            print("Parsing error: \(error)")
             completion(nil)
         }
     }
@@ -178,11 +168,7 @@ class NetworkManager {
                 print("Error while trying to find county from location: \(e)")
                 completion(nil)
             }
-//            print("placemarks found: \(placemarks)")
             if let placemark = placemarks?.first {
-//                print("country is: \(placemark.country!)")
-//                print("admin area is: \(placemark.administrativeArea!)")
-//                print("\n\nfirst placemark: \(placemark)")
                 let county = self.removeCountyFromString(placemark.subAdministrativeArea)
                 completion(county)
             } else {
@@ -230,7 +216,6 @@ class NetworkManager {
         }
     }
     
-//    func getOutageScoreForEntity(entityCode: String, completion: @escaping (OutageSummary?) -> SummaryData?) -> Void{
     func getOutageScoreForEntity(searchString: String, entityType: EntityType, from: String, until: String, completion: @escaping (Scores?) -> Void) -> Void{
         getEntityCode(searchString: searchString, entityType: entityType, completion: { code in
             guard let receivedCode = code else { return }
@@ -246,13 +231,10 @@ class NetworkManager {
                     return
                 } else {
                     guard let d = data else { return }
-                    //                print(String(data: d, encoding: .utf8)!)
                     self.parseJSON(data: d, forType: OutageSummary.self) { outageSummary in
                         if let summary = outageSummary {
                             guard let summaryData = summary.data?.first else { return }
                             guard let scores = summaryData?.scores else { return }
-                            //                        print("post: \(entityCode)")
-                            //                        guard let overallScore = scores.overall else { return }
                             completion(scores)
                         }
                         else {
