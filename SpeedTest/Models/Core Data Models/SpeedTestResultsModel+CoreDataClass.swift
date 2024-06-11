@@ -2,7 +2,7 @@
 //  SpeedTestResultsModel+CoreDataClass.swift
 //  SpeedTest
 //
-//  Created by admin on 5/31/24.
+//  Created by admin on 5/28/24.
 //
 //
 
