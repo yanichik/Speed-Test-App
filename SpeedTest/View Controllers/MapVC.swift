@@ -41,12 +41,13 @@ class MapVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         checkLocationServices()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
         rePopulateTestResultsIfNeed()
     }
+    
+//    override func viewWillLayoutSubviews() {
+//        super.viewWillLayoutSubviews()
+//        rePopulateTestResultsIfNeed()
+//    }
     
     func configureSaveLocationBtn() {
         saveLocationBtn.backgroundColor = .white
@@ -173,11 +174,12 @@ class MapVC: UIViewController {
             if fetchResults.count != self?.mapAnnotations.count {
                 guard let annotations = self?.mapView.annotations else
                 { return }
-                self?.mapView.removeAnnotations(annotations)
-                self?.mapAnnotations.removeAll()
                 self?.populateTestResults() { [weak self] annotations in
                     guard let receivedAnnotations = annotations else { return }
+                    self?.mapView.removeAnnotations(receivedAnnotations)
+                    self?.mapAnnotations.removeAll()
                     self?.mapAnnotations.append(contentsOf: receivedAnnotations)
+                    self?.view.setNeedsLayout()
                 }
             }
         } onFailure: { error in
@@ -269,6 +271,18 @@ extension MapVC: MKMapViewDelegate {
             return CustomTestResultClusterView(annotation: annotation, reuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         default:
             return nil
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+//        if let _ = view.annotation as? MKAnnotation {
+//            view.canShowCallout = true
+////            DispatchQueue.main.async {
+////                view.subviews[1].sizeToFit()
+////            }
+//        }
+        if let clustered = view.annotation as? MKClusterAnnotation {
+            mapView.showAnnotations(clustered.memberAnnotations, animated: true)
         }
     }
 }
