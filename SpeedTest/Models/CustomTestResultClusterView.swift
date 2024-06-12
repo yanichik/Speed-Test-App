@@ -22,11 +22,11 @@ class CustomTestResultClusterView: MKAnnotationView {
     
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        displayPriority = .defaultHigh
-        collisionMode = .circle
-        
+        displayPriority = .required
+        collisionMode = .rectangle
+        canShowCallout = true
         frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        centerOffset = CGPoint(x: 0, y: -frame.size.height/2)
+//        centerOffset = CGPoint(x: 0, y: -frame.size.height/2)
         setupUI()
         setUI(with: annotation as? MKClusterAnnotation)
     }

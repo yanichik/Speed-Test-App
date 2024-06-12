@@ -12,8 +12,11 @@ class CustomPointAnnotationView: MKAnnotationView {
     
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        displayPriority = .defaultHigh
+        collisionMode = .rectangle
         canShowCallout = true
-        
+        calloutOffset = CGPoint(x: -10, y: -10)
+//        layoutSubviews()
         commonInit()
     }
 
@@ -23,10 +26,15 @@ class CustomPointAnnotationView: MKAnnotationView {
 
     private func commonInit() {
         backgroundColor = .clear
-        let view = self.nibInstantiate(autoResizingMask: [.flexibleHeight, .flexibleWidth])
+        let view = self.nibInstantiate(autoResizingMask: [.flexibleHeight, .flexibleWidth, .flexibleBottomMargin, .flexibleTopMargin])
         frame = view.frame
         addSubview(view)
     }
+    
+//    override func setSelected(_ selected: Bool, animated: Bool) {
+//        super.setSelected(selected, animated: true)
+//        print(selected)
+//    }
 }
 
 extension UIView {
