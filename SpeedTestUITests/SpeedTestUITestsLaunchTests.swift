@@ -2,7 +2,7 @@
 //  SpeedTestUITestsLaunchTests.swift
 //  SpeedTestUITests
 //
-//  Created by admin on 5/14/24.
+//  Created by Yan Brunshteyn on 5/14/24.
 //
 
 import XCTest

@@ -2,7 +2,7 @@
 //  SpeedTestVC.swift
 //  SpeedTest
 //
-//  Created by admin on 5/14/24.
+//  Created by Yan Brunshteyn on 5/14/24.
 //
 
 import UIKit
@@ -211,8 +211,8 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                 if let customLocations = mapVC.fetchSavedCustomLocationsFromCoreData() {
                     for customLocation in customLocations {
                         let customSavedCLLocation = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
-                        // If current location w/in 30m of existing custom saved location then alert asking if it's the location
-                        if customSavedCLLocation.distance(from: myLocation) <= 30 {  // check if current location within 100 meters of each custom location
+                        // If current location w/in 100m of existing custom saved location then alert asking if it's the location
+                        if customSavedCLLocation.distance(from: myLocation) <= 100 {
                             savedLocationsWithin30Meters.append(customLocation)
                         }
                     }
@@ -242,6 +242,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                     } catch {
                         print("Data saving error: \(error)")
                     }
+                    self.checkForOutages(county)
                 }))
             }
         }
@@ -259,6 +260,16 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
         }
     }
     
+    func checkForOutages(_ county: String) {
+        let currentTimestamp = Int(Date().timeIntervalSince1970)
+        let twoHoursBackTimestamp = currentTimestamp - 700000000
+        NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+            if let overall = scores?.overall {
+                self.showOutageAlert(overall, county)
+            }
+        }
+    }
+    
     func saveNewLocationAlert(_ myLocation: CLLocation, _ passingVC: UIViewController, county: String, addedTestResult: SpeedTestResultsModel){
         let alert = UIAlertController(title: "Save Location", message: "Are you in \(county) County?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] action in
@@ -273,13 +284,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                             print("Data saving error: \(error)")
                         }
                     }
-                    let currentTimestamp = Int(Date().timeIntervalSince1970)
-                    let twoHoursBackTimestamp = currentTimestamp - 7200
-                    NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
-                        if let overall = scores?.overall {
-                            self?.showOutageAlert(overall, county)
-                        }
-                    }
+                    self?.checkForOutages(county)
                 }
             } else {
                 do {

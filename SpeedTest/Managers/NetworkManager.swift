@@ -2,7 +2,7 @@
 //  NetworkManager.swift
 //  SpeedTest
 //
-//  Created by admin on 5/23/24.
+//  Created by Yan Brunshteyn on 5/23/24.
 //
 
 /*
