@@ -75,9 +75,7 @@ class MapVC: UIViewController {
             if !savedLocationsWithin100Meters.isEmpty {
                 savedLocationsWithin100Meters.sort()
                 let inRangeLocationsAlert = UIAlertController(title: "Save Location", message: "Is current location any one of these already saved custom locations?", preferredStyle: .actionSheet)
-                inRangeLocationsAlert.addAction(UIAlertAction(title: "Save New Location", style: .cancel, handler: { action in
-                    self.saveNewCustomLocation(location: currentLocation, completion: nil)
-                }))
+                inRangeLocationsAlert.addAction(UIAlertAction(title: "Save New Location", style: .cancel))
                 for location in savedLocationsWithin100Meters {
                     inRangeLocationsAlert.addAction(UIAlertAction(title: location, style: .default, handler: { action in
                     }))
