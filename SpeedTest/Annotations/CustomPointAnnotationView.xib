@@ -28,7 +28,7 @@
                 <constraint firstItem="ZeC-xb-Yni" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="gdD-s3-83a"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="140" y="21"/>
+            <point key="canvasLocation" x="138.93129770992365" y="20.422535211267608"/>
         </view>
     </objects>
     <designables>

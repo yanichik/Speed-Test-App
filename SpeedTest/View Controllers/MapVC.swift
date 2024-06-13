@@ -2,7 +2,7 @@
 //  MapVC.swift
 //  SpeedTest
 //
-//  Created by admin on 5/18/24.
+//  Created by Yan Brunshteyn on 5/18/24.
 //
 
 import UIKit
@@ -44,10 +44,10 @@ class MapVC: UIViewController {
         rePopulateTestResultsIfNeed()
     }
     
-//    override func viewWillLayoutSubviews() {
-//        super.viewWillLayoutSubviews()
-//        rePopulateTestResultsIfNeed()
-//    }
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        rePopulateTestResultsIfNeed()
+    }
     
     func configureSaveLocationBtn() {
         saveLocationBtn.backgroundColor = .white
@@ -66,8 +66,8 @@ class MapVC: UIViewController {
                 if let locationName = location.locationName {
                     let customCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
                     let currentCLLocation = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
-                    // TODO: change to 100 meters
-                    if customCLLocation.distance(from: currentCLLocation) <= 100000 {  // check if current location within 100 meters of each custom location
+                    // check if current location within 100 meters of each custom location
+                    if customCLLocation.distance(from: currentCLLocation) <= 100 {
                         savedLocationsWithin100Meters.append(locationName)
                     }
                 }
@@ -132,30 +132,38 @@ class MapVC: UIViewController {
             testVC.fetchSpeedTestResultsFromCoreData { [weak self] results in
                 //TODO: add results annotations
                 guard let fetchResults = results else { return }
-                var pointAnnotations = [String:[CustomPointAnnotation]]()
+                var clusteredAnnotations = [String:[CustomPointAnnotation]]()
                 for result in fetchResults {
                     if let _ = result.date?.formatted(Date.FormatStyle(date: .abbreviated)),
                        let _ = result.date?.formatted(Date.FormatStyle(time: .shortened)) {
                         let annotation = CustomPointAnnotation(latitude: result.latitude, longitude: result.longitude)
                         annotation.title = "\(result.savedLocationName ?? String("NA"))" // + "\n\(date)" + "\n\(time)"
-                        annotation.subtitle = "DL: \(result.downloadSpeedMbps.rounded(.towardZero))Mbps\nUL: \(result.uploadSpeedMbps.rounded(.up))Mbps"
+                        annotation.subtitle = "DL: \(Int(floor(result.downloadSpeedMbps))) Mbps\nUL: \(Int(floor(result.uploadSpeedMbps))) Mbps"
                         if let name = result.savedLocationName {
-                            if pointAnnotations.contains(where: { (key: String, value: [CustomPointAnnotation]) in
+                            if clusteredAnnotations.contains(where: { (key: String, value: [CustomPointAnnotation]) in
                                 return key == name
                             }){
-                                pointAnnotations[name]?.append(annotation)
+                                if !clusteredAnnotations[name]!.contains(annotation){
+                                    clusteredAnnotations[name]!.append(annotation)
+                                }
                             } else {
-                                pointAnnotations[name] = [annotation]
+                                clusteredAnnotations[name] = [annotation]
                             }
                         } else {
-                            self?.mapView.addAnnotation(annotation)
+//                            self?.mapView.addAnnotation(annotation)
                             customPointAnnotations.append(annotation)
                         }
                     }
                 }
-                for (_, annotations) in pointAnnotations {
-                    self?.mapView.addAnnotations(annotations)
-                    customPointAnnotations.append(contentsOf: annotations)
+                for (_, annotations) in clusteredAnnotations {
+                    if let mapViewAnnotations = self?.mapView.annotations as? [CustomPointAnnotation] {
+                        if !mapViewAnnotations.contains(annotations){
+                            self?.mapView.addAnnotations(annotations)
+                        }
+                        if !customPointAnnotations.contains(annotations){
+                            customPointAnnotations.append(contentsOf: annotations)
+                        }
+                    }
                 }
                 completion(customPointAnnotations)
             } onFailure: { error in
@@ -170,16 +178,24 @@ class MapVC: UIViewController {
     func rePopulateTestResultsIfNeed() {
         guard let testVC = tabBarController?.viewControllers?.first(where: { $0 is SpeedTestVC }) as? SpeedTestVC else { return }
         testVC.fetchSpeedTestResultsFromCoreData { [weak self] results in
-            guard let fetchResults = results else { return }
-            if fetchResults.count != self?.mapAnnotations.count {
-                guard let annotations = self?.mapView.annotations else
-                { return }
-                self?.populateTestResults() { [weak self] annotations in
-                    guard let receivedAnnotations = annotations else { return }
-                    self?.mapView.removeAnnotations(receivedAnnotations)
-                    self?.mapAnnotations.removeAll()
-                    self?.mapAnnotations.append(contentsOf: receivedAnnotations)
-                    self?.view.setNeedsLayout()
+            guard let localSelf = self else {return}
+            guard let fetchResults:[SpeedTestResultsModel] = results else { return }
+            // First entry if NOT contain user location
+            let isInitialMapEntry = !localSelf.mapView.annotations.contains(where: {$0 is MKUserLocation})
+            // If initial entry then populating test results being taken care of by viewDidLoad already
+            if isInitialMapEntry { return }
+            // If just added result(s) and navigating back to map, check count (NOT including user location annotation and NOT clustered)
+            else {
+                let resultsToAdd = fetchResults.count - localSelf.mapView.annotations.filter({ $0 is CustomPointAnnotation }).count
+                if resultsToAdd > 0 {
+                    let lastAdded = fetchResults.suffix(resultsToAdd)
+                    for result in lastAdded {
+                        let annotation = CustomPointAnnotation(latitude: result.latitude, longitude: result.longitude)
+                        annotation.title = "\(result.savedLocationName ?? String("NA"))" // + "\n\(date)" + "\n\(time)"
+                        annotation.subtitle = "DL: \(Int(floor(result.downloadSpeedMbps))) Mbps\nUL: \(Int(floor(result.uploadSpeedMbps))) Mbps"
+                        localSelf.mapAnnotations.append(annotation)
+                        localSelf.mapView.addAnnotation(annotation)
+                    }
                 }
             }
         } onFailure: { error in
@@ -197,18 +213,18 @@ class MapVC: UIViewController {
     }
     
     func checkLocationServices() {
-        DispatchQueue.global().async { [weak self] in
+        DispatchQueue.global().async {
             guard CLLocationManager.locationServicesEnabled()  else {
                 // alert that need to enable location services on device
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Location Services Disabled", message: "Please enable location services in settings to see updated test results.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok.", style: .default))
-                    self?.present(alert, animated: true)
+                    self.present(alert, animated: true)
                 }
                 return
             }
-            self?.setupLocationManager()
-            self?.checkLocationAuthorization()
+            self.setupLocationManager()
+            self.checkLocationAuthorization()
         }
     }
     
@@ -267,7 +283,7 @@ extension MapVC: MKMapViewDelegate {
             view.annotation = annotation
             view.clusteringIdentifier = clusteringID
             return view
-        case is MKClusterAnnotation:
+        case is CustomTestResultClusterView:
             return CustomTestResultClusterView(annotation: annotation, reuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         default:
             return nil
@@ -275,12 +291,6 @@ extension MapVC: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-//        if let _ = view.annotation as? MKAnnotation {
-//            view.canShowCallout = true
-////            DispatchQueue.main.async {
-////                view.subviews[1].sizeToFit()
-////            }
-//        }
         if let clustered = view.annotation as? MKClusterAnnotation {
             mapView.showAnnotations(clustered.memberAnnotations, animated: true)
         }

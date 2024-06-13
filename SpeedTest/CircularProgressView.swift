@@ -2,7 +2,7 @@
 //  CircularProgressView.swift
 //  SpeedTest
 //
-//  Created by admin on 5/15/24.
+//  Created by Yan Brunshteyn on 5/15/24.
 //
 
 import UIKit

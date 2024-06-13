@@ -2,7 +2,7 @@
 //  SpeedTestVC.swift
 //  SpeedTest
 //
-//  Created by admin on 5/14/24.
+//  Created by Yan Brunshteyn on 5/14/24.
 //
 
 import UIKit
@@ -211,8 +211,8 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                 if let customLocations = mapVC.fetchSavedCustomLocationsFromCoreData() {
                     for customLocation in customLocations {
                         let customSavedCLLocation = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
-                        // If current location w/in 30m of existing custom saved location then alert asking if it's the location
-                        if customSavedCLLocation.distance(from: myLocation) <= 30 {  // check if current location within 100 meters of each custom location
+                        // If current location w/in 100m of existing custom saved location then alert asking if it's the location
+                        if customSavedCLLocation.distance(from: myLocation) <= 100 {
                             savedLocationsWithin30Meters.append(customLocation)
                         }
                     }
