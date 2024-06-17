@@ -17,6 +17,9 @@ class CustomTestResultClusterView: MKAnnotationView {
                 return
             }
             clusteringIdentifier = annotation.title
+//            detailCalloutAccessoryView = CustomCalloutView(annotation: annotation.memberAnnotations[0] as! CustomPointAnnotation)
+//            leftCalloutAccessoryView = CustomCalloutView(annotation: annotation.memberAnnotations[1] as! CustomPointAnnotation)
+//            rightCalloutAccessoryView = CustomCalloutView(annotation: annotation.memberAnnotations[2] as! CustomPointAnnotation)
         }
     }
     
