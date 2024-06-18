@@ -21,6 +21,7 @@
 		845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */; };
 		845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845F60002BF95CC8001BE8A2 /* MapVC.swift */; };
 		849F27B62C1A5DE100C72FA5 /* CustomCalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849F27B52C1A5DE100C72FA5 /* CustomCalloutView.swift */; };
+		849F27BC2C20D00800C72FA5 /* MKCoordinateSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849F27BB2C20D00800C72FA5 /* MKCoordinateSpan.swift */; };
 		84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAA2BF40CAF0094A661 /* AppDelegate.swift */; };
 		84B3BFAD2BF40CAF0094A661 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAC2BF40CAF0094A661 /* SceneDelegate.swift */; };
 		84B3BFAF2BF40CAF0094A661 /* SpeedTestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B3BFAE2BF40CAF0094A661 /* SpeedTestVC.swift */; };
@@ -67,6 +68,7 @@
 		845F5FF22BF540CD001BE8A2 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		845F60002BF95CC8001BE8A2 /* MapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapVC.swift; sourceTree = "<group>"; };
 		849F27B52C1A5DE100C72FA5 /* CustomCalloutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalloutView.swift; sourceTree = "<group>"; };
+		849F27BB2C20D00800C72FA5 /* MKCoordinateSpan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKCoordinateSpan.swift; sourceTree = "<group>"; };
 		84B3BFA72BF40CAF0094A661 /* SpeedTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeedTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B3BFAA2BF40CAF0094A661 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84B3BFAC2BF40CAF0094A661 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -174,6 +176,14 @@
 			path = Annotations;
 			sourceTree = "<group>";
 		};
+		849F27BA2C20CFED00C72FA5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				849F27BB2C20D00800C72FA5 /* MKCoordinateSpan.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		84B3BF9E2BF40CAF0094A661 = {
 			isa = PBXGroup;
 			children = (
@@ -198,6 +208,7 @@
 		84B3BFA92BF40CAF0094A661 /* SpeedTest */ = {
 			isa = PBXGroup;
 			children = (
+				849F27BA2C20CFED00C72FA5 /* Extensions */,
 				8409742C2BFFFC6500D56C55 /* Managers */,
 				849F27B42C1A5DBA00C72FA5 /* Annotations */,
 				845F5FFF2BF9528D001BE8A2 /* Models */,
@@ -377,6 +388,7 @@
 				84B3BFAF2BF40CAF0094A661 /* SpeedTestVC.swift in Sources */,
 				84B3BFAB2BF40CAF0094A661 /* AppDelegate.swift in Sources */,
 				84B3BFAD2BF40CAF0094A661 /* SceneDelegate.swift in Sources */,
+				849F27BC2C20D00800C72FA5 /* MKCoordinateSpan.swift in Sources */,
 				845F60012BF95CC8001BE8A2 /* MapVC.swift in Sources */,
 				845F5FF32BF540CD001BE8A2 /* CircularProgressView.swift in Sources */,
 				841AE2842C0A9C780083603B /* SpeedTestResultsModel+CoreDataClass.swift in Sources */,
