@@ -47,9 +47,14 @@ class MapVC: UIViewController {
         rePopulateTestResultsIfNeed()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        mapView.removeAnnotations(mapView.annotations)
+    }
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        rePopulateTestResultsIfNeed()
+//        rePopulateTestResultsIfNeed()
     }
     
     func configureSaveLocationBtn() {
@@ -166,6 +171,7 @@ class MapVC: UIViewController {
                         }
                     }
                 }
+                self?.mapView.addAnnotations(customPointAnnotations)
                 completion(customPointAnnotations)
             } onFailure: { error in
                 let alert = UIAlertController(title: "Fetch Results Error", message: "An error occurred while fetching your results history. Please try again.", preferredStyle: .alert)
