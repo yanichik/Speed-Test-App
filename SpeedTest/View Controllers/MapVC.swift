@@ -20,6 +20,9 @@ class MapVC: UIViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     var mapAnnotations = [CustomPointAnnotation]()
+    let maxZoom: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.0003808129715920927, longitudeDelta: 0.0002615153399432302)
+    
+    var clustersClicked = [MKClusterAnnotation:ClusterClick]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -266,6 +269,11 @@ class MapVC: UIViewController {
 
 // MARK: - MKMapViewDelegate
 extension MapVC: MKMapViewDelegate {
+    enum ClusterClick: Int {
+        case first = 0
+        case second
+    }
+    
     func mapView(_ mapView: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
         print("current annotation being dropped is: \(annotation.description)")
         guard !(annotation is MKUserLocation) else { return nil } // If MKUserLocation type then will use default user location annotation
@@ -281,17 +289,69 @@ extension MapVC: MKMapViewDelegate {
             view.annotation = annotation
             view.clusteringIdentifier = clusteringID
             return view
-        case is CustomTestResultClusterView:
+        case is MKClusterAnnotation:
             return CustomTestResultClusterView(annotation: annotation, reuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         default:
             return nil
         }
     }
     
+//    func mapView(_ mapView: MKMapView, didSelect view: CustomTestResultClusterView) {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let clustered = view.annotation as? MKClusterAnnotation {
-            mapView.showAnnotations(clustered.memberAnnotations, animated: true)
+            if clustersClicked.contains(where: {$0.key == clustered}){
+                // Third click on cluster - shows alert with results included in cluster
+                if clustersClicked[clustered] == .second {
+                    print(clustersClicked[clustered]!)
+//                    clustersClicked[clustered] = .first
+                    clustersClicked.removeValue(forKey: clustered)
+                    mapView.setRegion(MKCoordinateRegion(center: clustered.coordinate, latitudinalMeters: 1, longitudinalMeters: 1), animated: true)
+                    if let customTestResultClusterView = view as? CustomTestResultClusterView {
+                        guard let alertClusteredAnnotations = customTestResultClusterView.annotationInAlert() else { return }
+                        present(alertClusteredAnnotations, animated: true)
+                    }
+                    mapView.deselectAnnotation(clustered, animated: true)
+                } else {
+                    // Second click on cluster - max zoom and center
+                    print(clustersClicked[clustered]!)
+                    clustersClicked[clustered] = .second
+//                    mapView.showAnnotations(clustered.memberAnnotations, animated: true)
+                    mapView.setRegion(MKCoordinateRegion(center: clustered.coordinate, latitudinalMeters: 1, longitudinalMeters: 1), animated: true)
+                    mapView.deselectAnnotation(clustered, animated: true)
+                }
+            } else {
+                // Initial click on cluster
+                print("Initiated cluster click for \(clustered.title!)")
+                clustersClicked[clustered] = .first
+//                mapView.setRegion(MKCoordinateRegion(center: clustered.coordinate, latitudinalMeters: 1, longitudinalMeters: 1), animated: true)
+                mapView.showAnnotations(clustered.memberAnnotations, animated: true)
+                mapView.deselectAnnotation(clustered, animated: true)
+            }
         }
+    }
+
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+//        print("after region did change, visible clusters: \(mapView.visibleClusterAnnotations())")
+        
+    }
+    
+//    func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
+//    }
+}
+
+extension MKMapView {
+    func visibleClusterAnnotations() -> [MKClusterAnnotation]? {
+        let annotations = self.annotations(in: self.visibleMapRect).map { obj in return obj as? MKAnnotation }
+        let clustered = annotations.filter { obj in
+            guard let cluster = obj as? MKClusterAnnotation else { return false }
+            return true
+        }.map { obj in
+            obj as! MKClusterAnnotation
+        }
+//        return annotations.filter { obj in
+//            return type(of: obj) == MKClusterAnnotation.self ? true : false
+//        }
+        return clustered
     }
 }
 
