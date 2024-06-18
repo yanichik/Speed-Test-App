@@ -228,10 +228,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func isExistingLocationAlert(_ myLocation: CLLocation, _ savedLocations: [CustomLocationModel], _ passingVC: UIViewController, county: String, addedTestResult: SpeedTestResultsModel){
         let alert = UIAlertController(title: "Existing Location", message: "Are you currently at one of the nearby saved locations?", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "No, please add this new location.", style: .cancel, handler: { action in
-            // TODO: add new location
-            self.saveNewLocationAlert(myLocation, passingVC, county: county, addedTestResult: addedTestResult)
-        }))
+        alert.isSpringLoaded = false
         for location in savedLocations {
             if let name = location.locationName {
                 alert.addAction(UIAlertAction(title: name, style: .default, handler: { action in
@@ -246,6 +243,12 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                 }))
             }
         }
+        alert.addAction(UIAlertAction(title: "Please add this new custom location.", style: .default, handler: { action in
+            self.saveNewLocationAlert(myLocation, passingVC, county: county, addedTestResult: addedTestResult)
+        }))
+        alert.addAction(UIAlertAction(title: "Don't add custom location", style: .cancel, handler: { action in
+            self.checkForOutages(county)
+        }))
         present(alert, animated: true)
     }
     
