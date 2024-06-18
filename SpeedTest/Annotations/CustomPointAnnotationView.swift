@@ -43,9 +43,13 @@ class CustomPointAnnotationView: MKAnnotationView {
     
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        displayPriority = .defaultHigh
+        displayPriority = .required
         collisionMode = .rectangle
         commonInit()
+    }
+    
+    deinit {
+        print(annotation?.superclass)
     }
 
     required init?(coder aDecoder: NSCoder) {
