@@ -14,6 +14,7 @@ class MapVC: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var saveLocationBtn: UIButton!
+    @IBOutlet weak var goToLocationBtn: UIButton!
     
     let locationManager = CLLocationManager()
     
@@ -30,6 +31,7 @@ class MapVC: UIViewController {
         mapView.register(CustomTestResultClusterView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         mapView.register(CustomPointAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         configureSaveLocationBtn()
+        configureGoToLocationBtn()
         checkLocationServices()
         populateTestResults() { [weak self] annotations in
             guard let receivedAnnotations = annotations else { return }
@@ -65,6 +67,14 @@ class MapVC: UIViewController {
         saveLocationBtn.addTarget(self, action: #selector(saveCustomLocationTapped), for: .touchUpInside)
     }
     
+    func configureGoToLocationBtn() {
+        goToLocationBtn.backgroundColor = .white
+        goToLocationBtn.layer.borderColor = goToLocationBtn.tintColor.cgColor
+        goToLocationBtn.layer.borderWidth = 2
+        goToLocationBtn.layer.cornerRadius = goToLocationBtn.bounds.height/2
+        goToLocationBtn.addTarget(self, action: #selector(goToCustomLocationTapped), for: .touchUpInside)
+    }
+    
     @objc func saveCustomLocationTapped() {
         // get current location long and lat
         guard let currentLocation = locationManager.location?.coordinate else { return }
@@ -98,6 +108,33 @@ class MapVC: UIViewController {
         // TODO: group together with other existing locations if
         // TODO: in SpeedTestVC - ask if to add to any custom locations ONLY IF within existing custom locations inside 100 meters
     }
+    
+    @objc func goToCustomLocationTapped() {
+        var savedLocations = [[String:CustomLocationModel]]()
+        if let customLocations = fetchSavedCustomLocationsFromCoreData() {
+            for location in customLocations {
+                if let name = location.locationName{
+                    savedLocations.append([name:location])
+                }
+            }
+            savedLocations.sort { (dict1, dict2) -> Bool in
+                guard let (_,location1) = dict1.first, let (_,location2) = dict2.first else { return false }
+                return location1.locationName! < location2.locationName!
+            }
+            let savedLocationsAlert = UIAlertController(title: "Saved Locations", message: "Click to navigate to custom location.", preferredStyle: .actionSheet)
+            savedLocationsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            for location in savedLocations {
+                savedLocationsAlert.addAction(UIAlertAction(title: location.keys.first, style: .default, handler: { action in
+                    guard let locationLatitude = location.values.first?.latitude else { return }
+                    guard let locationLongitude = location.values.first?.longitude else { return }
+                    let locationRegion = MKCoordinateRegion.init(center: CLLocationCoordinate2D(latitude: locationLatitude, longitude: locationLongitude), latitudinalMeters: 1000, longitudinalMeters: 1000)
+                    self.mapView.setRegion(locationRegion, animated: true)
+                }))
+            }
+            present(savedLocationsAlert, animated: true)
+        }
+    }
+    
     func saveNewCustomLocation(location: CLLocationCoordinate2D, completion: ( (String) -> Void)? ) {
         let newCustomLocation = CustomLocationModel(context: context)
         newCustomLocation.latitude = location.latitude
@@ -349,7 +386,7 @@ extension MKMapView {
     func visibleClusterAnnotations() -> [MKClusterAnnotation]? {
         let annotations = self.annotations(in: self.visibleMapRect).map { obj in return obj as? MKAnnotation }
         let clustered = annotations.filter { obj in
-            guard let cluster = obj as? MKClusterAnnotation else { return false }
+            guard let _ = obj as? MKClusterAnnotation else { return false }
             return true
         }.map { obj in
             obj as! MKClusterAnnotation
