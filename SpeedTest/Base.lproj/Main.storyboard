@@ -66,20 +66,29 @@
                                     <fontDescription key="titleFontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="14"/>
                                 </buttonConfiguration>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3wv-eP-QdD" userLabel="Go To Location">
+                                <rect key="frame" x="5" y="733" width="125" height="31"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Go To Location">
+                                    <fontDescription key="titleFontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="14"/>
+                                </buttonConfiguration>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="mSZ-V5-EYZ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="C7b-8T-wW7" firstAttribute="leading" secondItem="mSZ-V5-EYZ" secondAttribute="leading" constant="5" id="1hf-6f-RXz"/>
+                            <constraint firstItem="mSZ-V5-EYZ" firstAttribute="bottom" secondItem="3wv-eP-QdD" secondAttribute="bottom" constant="5" id="CnC-Qk-LTX"/>
                             <constraint firstItem="C7b-8T-wW7" firstAttribute="top" secondItem="mSZ-V5-EYZ" secondAttribute="top" constant="5" id="MZw-Dj-d0I"/>
                             <constraint firstItem="WAk-BX-2Us" firstAttribute="leading" secondItem="mSZ-V5-EYZ" secondAttribute="leading" id="PbG-H1-RCa"/>
                             <constraint firstItem="mSZ-V5-EYZ" firstAttribute="trailing" secondItem="WAk-BX-2Us" secondAttribute="trailing" id="XjK-5h-Iim"/>
                             <constraint firstItem="WAk-BX-2Us" firstAttribute="top" secondItem="mSZ-V5-EYZ" secondAttribute="top" id="g1t-cw-Bc7"/>
                             <constraint firstItem="mSZ-V5-EYZ" firstAttribute="bottom" secondItem="WAk-BX-2Us" secondAttribute="bottom" id="qKE-nc-myC"/>
+                            <constraint firstItem="3wv-eP-QdD" firstAttribute="leading" secondItem="mSZ-V5-EYZ" secondAttribute="leading" constant="5" id="zap-NE-PL8"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" id="LO8-8q-txv"/>
                     <connections>
+                        <outlet property="goToLocationBtn" destination="3wv-eP-QdD" id="Biz-eZ-NgH"/>
                         <outlet property="mapView" destination="WAk-BX-2Us" id="N1j-Tu-a0V"/>
                         <outlet property="saveLocationBtn" destination="C7b-8T-wW7" id="lhr-LK-pQp"/>
                     </connections>
