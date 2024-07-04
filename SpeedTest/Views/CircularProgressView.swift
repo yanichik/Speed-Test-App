@@ -37,10 +37,10 @@ class CircularProgressView: UIView {
     
     func configureUploadDownloadLabel(withType type: String) {
         uploadDownloadLabel = UILabel()
-        uploadDownloadLabel.text = type
-        
         uploadDownloadLabel.translatesAutoresizingMaskIntoConstraints = false
-        uploadDownloadLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        uploadDownloadLabel.text = type
+        let fontDescriptor = UIFontDescriptor(name: "SFUI", size: 0)
+        uploadDownloadLabel.font = UIFont(descriptor: fontDescriptor, size: 26)
         uploadDownloadLabel.textColor = UIColor.black
         uploadDownloadLabel.isOpaque = true
         self.addSubview(uploadDownloadLabel)
@@ -78,7 +78,8 @@ class CircularProgressView: UIView {
     fileprivate func configureSpeedLabel() {
         speedLabel.translatesAutoresizingMaskIntoConstraints = false
         speedLabel.text = String(speed) + " Mbps"
-        speedLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        let fontDescriptor = UIFontDescriptor(name: "SFUI", size: 0)
+        speedLabel.font = UIFont(descriptor: fontDescriptor, size: 24)
         speedLabel.textColor = UIColor.black
         speedLabel.isOpaque = true
         self.addSubview(speedLabel)
@@ -91,7 +92,8 @@ class CircularProgressView: UIView {
     fileprivate func configureProgressLabel() {
         progressLabel.translatesAutoresizingMaskIntoConstraints = false
         progressLabel.text = String(format: "%.0f", (progress*100).rounded()) + "%"
-        progressLabel.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        let fontDescriptor = UIFontDescriptor(name: "SFUI", size: 0)
+        progressLabel.font = UIFont(descriptor: fontDescriptor, size: 24)
         progressLabel.textColor = UIColor.black
         progressLabel.isOpaque = true
         self.addSubview(progressLabel)
