@@ -8,16 +8,12 @@
 import UIKit
 
 class TabBarController: UITabBarController {
-    @IBOutlet weak var customTabBar: UITabBar!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        for item in customTabBar.items! {
-//            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor.black], for: .normal)
-            item.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : Color.custom(hexString: "393939", alpha: 1).value], for: .normal)
+        for item in tabBar.items! {
+            item.setTitleTextAttributes([NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12, weight: .bold)], for: .normal)
         }
-
-        // Do any additional setup after loading the view.
+        tabBar.backgroundColor = UIColor(red: 255, green: 255, blue: 255, alpha: 1)
     }
     
 
