@@ -31,8 +31,8 @@ class SpeedTestVC: UIViewController {
     let gradientLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
-            UIColor.lightText.cgColor,
-            UIColor.lightGray.cgColor
+            Color.affirmation.value.cgColor,
+            Color.affirmation.value.cgColor
         ]
         return layer
     }()
@@ -59,14 +59,13 @@ class SpeedTestVC: UIViewController {
         stopBtn.setTitle("Stop Current Test", for: .normal)
         stopBtn.addTarget(self, action: #selector(stopBtnTapped), for: .touchUpInside)
         stopBtn.translatesAutoresizingMaskIntoConstraints = false
-        stopBtn.titleLabel?.font = UIFont(name: "TimesNewRomanPSMT", size: 24)
+        stopBtn.titleLabel?.font = .systemFont(ofSize: 24, weight: .semibold)
         stopBtn.setTitleColor(.red, for: .normal)
         view.addSubview(stopBtn)
         NSLayoutConstraint.activate([
             stopBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stopBtn.centerYAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height/8))
+            stopBtn.centerYAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height/6))
         ])
-        
     }
     
     @objc func stopBtnTapped() {
@@ -207,18 +206,18 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
             NetworkManager.shared.getCountyFromCoordinates(location: myLocation) { [weak self] county in
                 guard let county = county else {return}
                 guard let mapVC = self?.tabBarController?.viewControllers?.first(where: {$0 is MapVC}) as? MapVC else { return }
-                var savedLocationsWithin30Meters = [CustomLocationModel]()
+                var savedLocationsWithin100Meters = [CustomLocationModel]()
                 if let customLocations = mapVC.fetchSavedCustomLocationsFromCoreData() {
                     for customLocation in customLocations {
                         let customSavedCLLocation = CLLocation(latitude: customLocation.latitude, longitude: customLocation.longitude)
                         // If current location w/in 100m of existing custom saved location then alert asking if it's the location
                         if customSavedCLLocation.distance(from: myLocation) <= 100 {
-                            savedLocationsWithin30Meters.append(customLocation)
+                            savedLocationsWithin100Meters.append(customLocation)
                         }
                     }
                 }
-                if !savedLocationsWithin30Meters.isEmpty{
-                    self?.isExistingLocationAlert(myLocation, savedLocationsWithin30Meters, mapVC, county: county, addedTestResult: addedTestResult)
+                if !savedLocationsWithin100Meters.isEmpty{
+                    self?.isExistingLocationAlert(myLocation, savedLocationsWithin100Meters, mapVC, county: county, addedTestResult: addedTestResult)
                 } else {
                     self?.saveNewLocationAlert(myLocation, mapVC, county: county, addedTestResult: addedTestResult)
                 }
@@ -265,8 +264,8 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func checkForOutages(_ county: String) {
         let currentTimestamp = Int(Date().timeIntervalSince1970)
-        let twoHoursBackTimestamp = currentTimestamp - 700000000
-        NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+        let twentyFourBackTimestamp = currentTimestamp - (3600 * 24)    // 3600 ms per hour
+        NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twentyFourBackTimestamp), until: String(currentTimestamp)) { scores in
             if let overall = scores?.overall {
                 self.showOutageAlert(overall, county)
             }
@@ -296,8 +295,8 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
                     print("Data saving error: \(error)")
                 }
                 let currentTimestamp = Int(Date().timeIntervalSince1970)
-                let twoHoursBackTimestamp = currentTimestamp - 700000000
-                NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twoHoursBackTimestamp), until: String(currentTimestamp)) { scores in
+                let twentyFourBackTimestamp = currentTimestamp - (3600 * 24)    // 3600 ms per hour
+                NetworkManager.shared.getOutageScoreForEntity(searchString: county, entityType: .county, from: String(twentyFourBackTimestamp), until: String(currentTimestamp)) { scores in
                     if let overall = scores?.overall {
                         self?.showOutageAlert(overall, county)
                     }
@@ -309,7 +308,7 @@ extension SpeedTestVC: InternetSpeedTestDelegate {
     
     func showOutageAlert(_ overall: Double, _ county: String) {
         guard let formattedOverall = formatDouble(overall) else { return }
-        let outageAlert = UIAlertController(title: "2-Hour Outage Alert", message: "", preferredStyle: .alert)
+        let outageAlert = UIAlertController(title: "24-Hour Outage Alert", message: "", preferredStyle: .alert)
         outageAlert.message = "\(county) County has an Internet Outage Score of \(formattedOverall) that could be affecting your connectivity."
         outageAlert.addAction(UIAlertAction(title: "OK", style: .cancel))
         DispatchQueue.main.async { [weak self] in
